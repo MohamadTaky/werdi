@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Baloo_Bhaijaan_2 } from "next/font/google";
 import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 
 const tajawal = Baloo_Bhaijaan_2({ subsets: ["latin"] });
 export const metadata = {
@@ -15,7 +16,8 @@ export default async function RootLayout({
 	children: React.ReactNode;
 	auth: React.ReactNode;
 }) {
-	const session = await getServerSession();
+	const session = await getServerSession(authOptions);
+
 	return (
 		<html lang="ar" dir="rtl">
 			<body className={tajawal.className}>{session ? children : auth}</body>
