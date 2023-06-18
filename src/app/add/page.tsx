@@ -29,7 +29,7 @@ export default function AddPage() {
         name="count"
       />
       <div className="mx-auto flex w-fit items-center gap-2">
-        {!isLoading ? (
+        {isLoading ? (
           <CircleNotch size="48" className="animate-spin"/>
         ) : (
           <>
