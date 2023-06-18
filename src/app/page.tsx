@@ -2,7 +2,7 @@ import Topbar from "@/app/components/Topbar";
 import Navbar from "@/app/components/Navbar";
 import { Plus } from "@/components/icons";
 import Link from "next/link";
-import WerdList from "./components/WerdList";
+import WerdList from "@/app/components/WerdList";
 
 export default async function Home() {
   return (
@@ -10,7 +10,7 @@ export default async function Home() {
       <Topbar />
       <div className="relative">
         <Navbar />
-        {/* @ts-expect-error Server Component */}
+        {/* @ts-ignore */}
         <WerdList />
         <Link
           href="/add"
