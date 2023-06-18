@@ -12,7 +12,7 @@ model Werd {
   id    String  @id @default(cuid())
   text  String  @unique
   count Int
-  done  Boolean
+  done  Boolean @default(false)
 
   User   User   @relation(fields: [userId], references: [id])
   userId String

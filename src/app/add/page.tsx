@@ -1,11 +1,12 @@
-import { Check, X } from "@/components/icons";
+"use client";
+import { Check, X, CircleNotch } from "@/components/icons";
 import Link from "next/link";
-import addWerdAction from "./actions/addWerdAction";
-import FormControl from "./components/FormControl";
+import useAddWerdMutation from "./hooks/useAddWerdMutation";
 
 export default function AddPage() {
+  const { mutate, isLoading } = useAddWerdMutation();
   return (
-    <form action={addWerdAction} className="mx-auto max-w-xs space-y-4 p-3 pt-32">
+    <form onSubmit={mutate} className="mx-auto max-w-xs space-y-4 p-3 pt-32">
       <h2 className="mb-6 text-2xl font-semibold">إضافة عنصر جديد</h2>
       <label htmlFor="text" className="mb-2 block">
         الذِكر:
@@ -27,7 +28,20 @@ export default function AddPage() {
         id="count"
         name="count"
       />
-      <FormControl/>
+      <div className="mx-auto flex w-fit items-center gap-2">
+        {!isLoading ? (
+          <CircleNotch size="48" className="animate-spin"/>
+        ) : (
+          <>
+            <button type="submit" className="rounded border border-green-400 bg-green-500 px-2 py-1 shadow">
+              <Check size="28" weight="bold" className="text-white" />
+            </button>
+            <Link href="/" className="rounded border border-red-400 bg-red-500 px-2 py-1 shadow">
+              <X size="28" weight="bold" className="text-white" />
+            </Link>
+          </>
+        )}
+      </div>
     </form>
   );
 }
