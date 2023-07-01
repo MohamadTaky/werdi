@@ -15,8 +15,8 @@ export default async function GroupsPage() {
     <div className="p-3">
       <AddGroupForm />
       {data?.map((group) => (
-        <Link href={`groups/${group.id}`}>
-          <Card key={group.id}>
+        <Link key={group.id} href={`groups/${group.id}`}>
+          <Card>
             <CardHeader>
               <CardTitle>{group.name}</CardTitle>
             </CardHeader>

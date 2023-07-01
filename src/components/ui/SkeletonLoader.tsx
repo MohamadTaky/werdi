@@ -6,8 +6,8 @@ export default function SkeletonLoader() {
     <>
       {Array(3)
         .fill("")
-        .map(() => (
-          <Card className="my-3">
+        .map((_v, i) => (
+          <Card key={i} className="my-3">
             <CardContent className="p-4">
               <Skeleton className="h-5 w-2/3" />
               <Skeleton className="mt-4 h-5 w-1/2" />
