@@ -1,44 +1,45 @@
 "use client";
-import { Check, CircleNotch, X } from "@/components/icons";
+import { Check, CircleNotch, ListBullets } from "@/components/icons";
+import { Button } from "@/components/ui/Button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Werd } from "@prisma/client";
-import useCheckWerdMutation from "./hooks/useCheckWerdMutation";
-import useDeleteWerdMutaton from "./hooks/useDeleteWerdMutation";
+import { differenceInDays } from "date-fns";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import useCheckWerdMutation from "@/hooks/useCheckWerdMutation";
 
-export default function ({ text, count, done, id }: Werd) {
-  const { mutate: deleteWerd, isLoading: isDeleting } = useDeleteWerdMutaton();
-  const { mutate: checkWerd, isLoading: isChecking } = useCheckWerdMutation();
+export default function WerdItem({ text, currentCount, completed, lastCompletedAt, id, streak }: Werd) {
+  const { refresh } = useRouter();
+  const { mutate: checkWerd, isLoading: isChecking } = useCheckWerdMutation({ onSuccess: refresh });
   return (
-    <li className="space-y-2 rounded-md border-2 bg-gray-100 p-2 shadow">
-      <p>الذكر: {text}</p>
-      <p>العدد: {count}</p>
-      <div className="flex items-center gap-2">
-        <button
-          disabled={isChecking}
-          onClick={() => checkWerd({ id, done: !done })}
-          className={`h-7 w-7 cursor-pointer rounded border-gray-200 p-1 transition-colors ${
-            done && !isChecking ? "bg-blue-500" : "bg-gray-300"
-          }`}
+    <Card className="border-2 shadow-md">
+      <CardHeader className="p-3">
+        <CardTitle>{text}</CardTitle>
+      </CardHeader>
+      <CardContent className="p-3">
+        <p>الإنجازات المتتالية: {streak}</p>
+        <p>{currentCount} مرة</p>
+      </CardContent>
+      <CardFooter className="flex gap-2 p-3 pt-0">
+        <Button
+          size="sm"
+          variant="secondary"
+          className={completed ? "bg-blue-500 disabled:opacity-100" : ""}
+          disabled={differenceInDays(new Date(), lastCompletedAt ?? 0) === 0 || isChecking}
+          onClick={() => checkWerd({ id, completed: !completed, count: currentCount })}
         >
           {isChecking ? (
-            <CircleNotch className="animate-spin opacity-80" size="20" weight="bold" />
-          ) : done ? (
-            <Check size="20" weight="bold" className="text-white opacity-80" />
+            <CircleNotch className="animate-spin" size="24" weight="bold" />
           ) : (
-            <></>
+            <Check size="24" weight="bold" className={`text-white ${!completed ? "opacity-0" : ""}`} />
           )}
-        </button>
-        <button
-          disabled={isDeleting}
-          onClick={() => deleteWerd({ id })}
-          className="cursor-pointer rounded border-red-400 bg-red-500 p-1 transition-colors"
-        >
-          {isDeleting ? (
-            <CircleNotch className="animate-spin opacity-80" size="20" weight="bold" />
-          ) : (
-            <X size="20" weight="bold" className="text-white" />
-          )}
-        </button>
-      </div>
-    </li>
+        </Button>
+        <Button size="sm" asChild>
+          <Link href={`/werd/${id}`}>
+            عرض التفاصيل <ListBullets size="20" weight="bold" className="mb-0.5 mr-2 inline-block" />
+          </Link>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

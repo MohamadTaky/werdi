@@ -1,14 +1,15 @@
 "use client";
-import { HTMLAttributes } from "react";
-import { House, SignOut as SignOutIcon } from "@/components/icons";
-import SignOut from "./SignOut";
-import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import { House, SignOut as SignOutIcon, Users } from "@/components/icons";
+import ActiveLink from "@/components/ui/custom/ActiveLink";
+import { Button } from "@/components/ui/Button";
 import { AnimatePresence, motion } from "framer-motion";
+import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Navbar() {
   const searchParams = useSearchParams();
-  const router = useRouter();
+  const { back, replace } = useRouter();
   const isOpen = searchParams.get("nav") === "open";
   return (
     <AnimatePresence mode="wait">
@@ -18,8 +19,8 @@ export default function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 cursor-default bg-black opacity-30"
-            onClick={() => router.back()}
+            className="absolute inset-0 z-30 cursor-default bg-black opacity-30"
+            onClick={() => back()}
           >
             <Link className="" href="?nav=close" />
           </motion.div>
@@ -28,23 +29,27 @@ export default function Navbar() {
             initial={{ translateX: "100%" }}
             animate={{ translateX: 0 }}
             exit={{ translateX: "100%" }}
-            className="absolute inset-0 w-2/3 bg-gray-200 md:w-52"
+            className="absolute inset-0 z-30 w-2/3 bg-gray-200 md:w-52"
           >
-            <Link className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-300" href="/">
-              <House size="24" />
-              <span>الرئيسة</span>
-            </Link>
-            <SignOut className="flex w-full cursor-pointer items-center gap-2 p-2 hover:bg-gray-300">
-              <SignOutIcon size="24" />
-              <span>تسجيل الخروج</span>
-            </SignOut>
+            <ActiveLink href="/">
+              <House size="24" /> الرئيسة
+            </ActiveLink>
+            <ActiveLink href="/groups">
+              <Users size="24" /> المجموعات
+            </ActiveLink>
+            <Button
+              onClick={async () => {
+                await signOut();
+                replace("/");
+              }}
+              variant="ghost"
+              className="w-full justify-start gap-2 rounded-none"
+            >
+              <SignOutIcon size="24" /> تسجيل الخروج
+            </Button>
           </motion.nav>
         </>
       )}
     </AnimatePresence>
   );
-}
-
-function Item({ children, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div {...props}>{children}</div>;
 }
