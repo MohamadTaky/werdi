@@ -31,15 +31,15 @@ export default async function WerdPage({ params: { werdId } }: { params: { werdI
           data={completions.map((completion) => completion.completedAt)}
         />
       </div>
-      <div className="mt-2 grid grid-cols-2 gap-2 text-center text-lg">
-        <p>
-          <span className="block text-3xl font-bold text-blue-500">{streak}</span> إنجازات متتالية
+      <div className="mt-2 grid grid-cols-2 gap-2 text-center text-lg md:grid-cols-3">
+        <p className="col-span-2 md:col-span-1">
+          <span className="block text-2xl font-bold text-blue-500">{currentCount}</span> مرة
         </p>
         <p>
           <span className="block text-3xl font-bold text-blue-500">{longestStreak}</span> أطول سلسلة
         </p>
-        <p className=" col-span-2">
-          <span className="block text-2xl font-bold text-blue-500">{currentCount}</span> مرة
+        <p>
+          <span className="block text-3xl font-bold text-blue-500">{streak}</span> إنجازات متتالية
         </p>
       </div>
       <DeleteButton id={werdId} className="mt-auto w-fit" />

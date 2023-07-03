@@ -24,9 +24,9 @@ export default function WerdItem({ text, currentCount, completed, lastCompletedA
         <Button
           size="sm"
           variant="secondary"
-          className={completed ? "bg-blue-500 disabled:opacity-100" : ""}
+          className={completed ? "bg-blue-500 hover:bg-blue-500 disabled:opacity-100" : ""}
           disabled={differenceInDays(new Date(), lastCompletedAt ?? 0) === 0 || isChecking}
-          onClick={() => checkWerd({ id, completed: !completed, count: currentCount })}
+          onClick={() => checkWerd(id)}
         >
           {isChecking ? (
             <CircleNotch className="animate-spin" size="24" weight="bold" />

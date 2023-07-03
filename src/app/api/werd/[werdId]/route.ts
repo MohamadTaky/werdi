@@ -9,3 +9,28 @@ export async function DELETE(_request: NextRequest, { params: { werdId } }: { pa
     return NextResponse.json(error, { status: 500 });
   }
 }
+
+export async function PUT(_request: NextRequest, { params: { werdId } }: { params: { werdId: string } }) {
+  try {
+    const werd = await prisma.werd.findUnique({ where: { id: werdId } });
+    if (!werd) throw new Error("requested werd not found");
+    const updatedWerd = await prisma.werd.update({
+      where: { id: werdId },
+      data: {
+        completed: true,
+        lastCompletedAt: new Date(),
+        streak: { increment: 1 },
+        longestStreak: Math.max(werd.streak + 1, werd.longestStreak),
+        completions: {
+          create: {
+            count: werd.currentCount,
+            completedAt: new Date(),
+          },
+        },
+      },
+    });
+    return NextResponse.json(updatedWerd, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(error, { status: 500 });
+  }
+}

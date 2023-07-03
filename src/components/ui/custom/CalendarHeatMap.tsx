@@ -18,10 +18,16 @@ interface Props extends HTMLAttributes<SVGSVGElement> {
   cellSize: number;
   spacing: number;
   data: Date[];
+  margins?: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+  };
 }
 
 export default function CalendarHeatMap({ cellSize, spacing, data, ...props }: Props) {
-  const margins = { top: 20, bottom: 0, left: 0, right: 40 };
+  const margins = { top: 20, bottom: 5, left: 0, right: 40 };
   const height = margins.top + margins.bottom + cellSize * 7 + spacing * 6;
   const width = margins.left + margins.right + cellSize * 53 + spacing * 52;
   const today = new Date();
@@ -49,9 +55,9 @@ export default function CalendarHeatMap({ cellSize, spacing, data, ...props }: P
           key={month.toString()}
           width={cellSize}
           height={cellSize}
-          x={xScale(differenceInWeeks(month, days[0]))}
+          x={xScale(differenceInWeeks(month, days[0])) + cellSize}
           y={yScale(0) - 4}
-          textAnchor="end"
+          textAnchor="start"
         >
           {format(month, "MMMM", { locale: ar })}
         </text>
