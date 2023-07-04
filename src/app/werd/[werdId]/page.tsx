@@ -10,16 +10,21 @@ export const generateMetadata = async ({
 }: {
   params: { werdId: string };
 }): Promise<Metadata> => {
-  const werd = await prisma.werd.findUnique({ where: { id: werdId } });
-  return {
-    title: werd?.text,
-  };
+  const userWerd = await prisma.userWerd.findUnique({ where: { id: werdId }, include: { werd: true } });
+  return { title: userWerd?.werd.text };
 };
 
 export default async function WerdPage({ params: { werdId } }: { params: { werdId: string } }) {
-  const werd = await prisma.werd.findUnique({ where: { id: werdId }, include: { completions: true } });
-  if (!werd) notFound();
-  const { text, currentCount, streak, longestStreak, createdAt, completions } = werd;
+  const userWerd = await prisma.userWerd.findUnique({
+    where: { id: werdId },
+    include: { completions: true, werd: true, streak: true },
+  });
+  if (!userWerd) notFound();
+  const {
+    werd: { text, count, createdAt },
+    streak: { currentStreak, longestStreak },
+    completions,
+  } = userWerd;
   return (
     <>
       <h2 className="text-center text-lg font-semibold">{text}</h2>
@@ -33,13 +38,13 @@ export default async function WerdPage({ params: { werdId } }: { params: { werdI
       </div>
       <div className="mt-2 grid grid-cols-2 gap-2 text-center text-lg md:grid-cols-3">
         <p className="col-span-2 md:col-span-1">
-          <span className="block text-2xl font-bold text-blue-500">{currentCount}</span> مرة
+          <span className="block text-2xl font-bold text-blue-500">{count}</span> مرة
         </p>
         <p>
           <span className="block text-3xl font-bold text-blue-500">{longestStreak}</span> أطول سلسلة
         </p>
         <p>
-          <span className="block text-3xl font-bold text-blue-500">{streak}</span> إنجازات متتالية
+          <span className="block text-3xl font-bold text-blue-500">{currentStreak}</span> إنجازات متتالية
         </p>
       </div>
       <DeleteButton id={werdId} className="mt-auto w-fit" />

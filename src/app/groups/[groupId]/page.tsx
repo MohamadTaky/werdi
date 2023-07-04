@@ -38,7 +38,12 @@ export default async function GroupPage({ params: { groupId } }: { params: { gro
     include: {
       members: true,
       admin: true,
-      werds: { include: { completions: { where: { completedAt: { gte: addDays(new Date(), -1) } } } } },
+      werds: {
+        include: {
+          completions: { where: { completion: { completedAt: { gte: addDays(new Date(), -1) } } } },
+          werd: true,
+        },
+      },
     },
   });
 

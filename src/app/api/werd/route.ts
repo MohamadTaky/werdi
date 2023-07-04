@@ -9,11 +9,11 @@ export async function POST(request: NextRequest) {
     const data = await request.json();
     const { text, count } = postRequestValidator.parse(data);
     const session = (await getServerSession()) as Session;
-    const werd = await prisma.werd.create({
+    const werd = await prisma.userWerd.create({
       data: {
-        text,
-        currentCount: Number(count),
-        userId: session.user.id,
+        user: { connect: { id: session.user.id } },
+        werd: { create: { text, count: Number(count) } },
+        streak: { create: {} },
       },
     });
     return NextResponse.json(werd, { status: 200 });

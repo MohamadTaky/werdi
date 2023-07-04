@@ -9,89 +9,118 @@ datasource db {
 }
 
 model User {
-  id                  String                @id @default(cuid())
-  name                String?
-  email               String?               @unique
-  emailVerified       DateTime?
-  image               String?
-  accounts            Account[]
-  sessions            Session[]
-  werds               Werd[]
-  groups              Group[]
-  ownedGroups         Group[]               @relation("ownedGroups")
-  GroupWerdCompletion GroupWerdCompletion[]
+  id                   String                @id @default(cuid())
+  name                 String?
+  email                String?               @unique
+  emailVerified        DateTime?
+  image                String?
+  accounts             Account[]
+  sessions             Session[]
+  ownedGroups          Group[]               @relation(name: "ownedGroups")
+  groups               Group[]
+  userWerds            UserWerd[]
+  groupWerdCompletions GroupWerdCompletion[]
+  groupWerdStreaks     GroupWerdStreak[]
 }
 
 model Group {
-  id        String      @id @default(cuid())
-  name      String      @unique
-  admin     User        @relation(name: "ownedGroups", fields: [adminId], references: [id])
-  adminId   String
-  members   User[]
-  createdAt DateTime    @default(now())
-  werds     GroupWerd[]
+  id         String      @id @default(cuid())
+  name       String
+  admin      User        @relation(name: "ownedGroups", fields: [adminId], references: [id])
+  adminId    String
+  members    User[]
+  werds GroupWerd[]
 
   @@index([adminId])
 }
 
-model GroupWerd {
-  id           String                @id @default(cuid())
-  text         String
-  group        Group                 @relation(fields: [groupId], references: [id])
-  groupId      String
-  completions  GroupWerdCompletion[]
-  currentCount Int
-  createdAt    DateTime              @default(now())
-
-  @@unique([text, groupId])
-  @@index([groupId])
-}
-
-model GroupWerdCompletion {
-  id     String    @id @default(cuid())
-  werd   GroupWerd @relation(fields: [werdId], references: [id], onDelete: Cascade)
-  werdId String
-
-  completedBy User     @relation(fields: [userId], references: [id])
-  userId      String
-  completedAt DateTime @default(now())
-
-  @@index([werdId])
-  @@index([userId])
-}
-
 model Werd {
-  id              String    @id @default(cuid())
-  text            String    @unique
-  currentCount    Int
-  completed       Boolean   @default(false)
+  id        String     @id @default(cuid())
+  text      String
+  count     Int
+  userWerd  UserWerd?
+  GroupWerd GroupWerd?
+  createdAt DateTime   @default(now())
+}
+
+model UserWerd {
+  id              String       @id @default(cuid())
+  user            User         @relation(fields: [userId], references: [id])
+  userId          String
+  werd            Werd         @relation(fields: [werdId], references: [id])
+  werdId          String       @unique
+  completions     Completion[]
+  streak          Streak       @relation(fields: [streakId], references: [id])
+  streakId        String       @unique
+  completed       Boolean      @default(false)
   lastCompletedAt DateTime?
-  streak          Int       @default(0)
-  longestStreak   Int       @default(0)
-  createdAt       DateTime  @default(now())
-
-  completions Completion[]
-
-  User   User   @relation(fields: [userId], references: [id])
-  userId String
 
   @@index([userId])
+  @@index([werdId])
+}
+
+model GroupWerd {
+  id          String                @id @default(cuid())
+  group       Group                 @relation(fields: [groupId], references: [id])
+  groupId     String
+  werd        Werd                  @relation(fields: [werdId], references: [id])
+  werdId      String                @unique
+  completions GroupWerdCompletion[]
+  streaks     GroupWerdStreak[]
+
+  @@index([groupId])
+  @@index([werdId])
 }
 
 model Completion {
-  id String @id @default(cuid())
-
-  werd        Werd     @relation(fields: [werdId], references: [id], onDelete: Cascade)
-  werdId      String
-  completedAt DateTime @default(now())
-  count       Int
+  id                  String               @id @default(cuid())
+  count               Int
+  completedAt         DateTime             @default(now())
+  werd                UserWerd?            @relation(fields: [werdId], references: [id])
+  werdId              String?
+  groupWerdCompletion GroupWerdCompletion?
 
   @@index([werdId])
+}
+
+model GroupWerdCompletion {
+  id           String     @id @default(cuid())
+  groupWerd    GroupWerd  @relation(fields: [groupWerdId], references: [id])
+  groupWerdId  String
+  user         User       @relation(fields: [userId], references: [id])
+  userId       String
+  completion   Completion @relation(fields: [completionId], references: [id])
+  completionId String     @unique
+
+  @@index([groupWerdId])
+  @@index([userId])
+  @@index([completionId])
+}
+
+model Streak {
+  id              String           @id @default(cuid())
+  currentStreak   Int              @default(0)
+  longestStreak   Int              @default(0)
+  userWerd        UserWerd?
+  groupWerdStreak GroupWerdStreak?
+}
+
+model GroupWerdStreak {
+  id          String    @id @default(cuid())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  streak      Streak    @relation(fields: [streakId], references: [id])
+  streakId    String    @unique
+  GroupWerd   GroupWerd @relation(fields: [groupWerdId], references: [id])
+  groupWerdId String
+
+  @@index([userId])
+  @@index([streakId])
+  @@index([groupWerdId])
 }
 
 model Account {
   id                String  @id @default(cuid())
-  userId            String
   type              String
   provider          String
   providerAccountId String
@@ -102,8 +131,8 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
 
   @@unique([provider, providerAccountId])
 }

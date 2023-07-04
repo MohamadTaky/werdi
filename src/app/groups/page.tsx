@@ -10,7 +10,6 @@ export default async function GroupsPage() {
   const data = await prisma.group.findMany({
     where: { OR: [{ adminId: session.user.id }, { members: { some: { id: session.user.id } } }] },
   });
-
   return (
     <div className="p-3">
       <AddGroupForm />

@@ -2,20 +2,23 @@
 import React from "react";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { GroupWerd, GroupWerdCompletion } from "@prisma/client";
-import { CircleNotch, Check } from "@/components/icons";
+import { GroupWerd, GroupWerdCompletion, Werd } from "@prisma/client";
+import { CircleNotch, Check, ListBullets } from "@/components/icons";
 import useCheckGroupWerdMutation from "@/hooks/useCheckGroupWerdMutation";
 import useDeleteGroupWerdMutation from "@/hooks/useDeleteGroupWerdMutation";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 
-interface Props extends GroupWerd {
+type Props = GroupWerd & {
+  werd: Werd;
   completions: GroupWerdCompletion[];
   adminId: string;
-}
+};
 
-export default function GroupWerdItem({ text, currentCount, groupId, adminId, id, completions }: Props) {
+export default function GroupWerdItem({ werd: { text, count }, groupId, adminId, id, completions }: Props) {
   const { refresh } = useRouter();
+  const pathname = usePathname();
   const { mutate: checkWerd, isLoading: checking } = useCheckGroupWerdMutation({ onSuccess: refresh });
   const { mutate: deleteWerd, isLoading: deleting } = useDeleteGroupWerdMutation({ onSuccess: refresh });
   const session = useSession();
@@ -27,9 +30,9 @@ export default function GroupWerdItem({ text, currentCount, groupId, adminId, id
         <CardTitle>{text}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p>العدد : {currentCount}</p>
+        <p>العدد : {count}</p>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="gap-2">
         <Button
           size="sm"
           variant="secondary"
@@ -42,6 +45,12 @@ export default function GroupWerdItem({ text, currentCount, groupId, adminId, id
           ) : (
             <Check size="24" weight="bold" className={`text-white ${!completed ? "opacity-0" : ""}`} />
           )}
+        </Button>
+        <Button asChild size="sm">
+          <Link href={`${pathname}/${id}`}>
+            عرض التفاصيل
+            <ListBullets size="24" />
+          </Link>
         </Button>
         {adminId === session.data?.user.id && (
           <Button

@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  id                  String                @id @default(cuid())
+  name                String?
+  email               String?               @unique
+  emailVerified       DateTime?
+  image               String?
+  accounts            Account[]
+  sessions            Session[]
+  werds               Werd[]
+  groups              Group[]
+  ownedGroups         Group[]               @relation("ownedGroups")
+  GroupWerdCompletion GroupWerdCompletion[]
+  GroupWerdStreak     GroupWerdStreak[]
+}
+
+model Group {
+  id        String      @id @default(cuid())
+  name      String      @unique
+  admin     User        @relation(name: "ownedGroups", fields: [adminId], references: [id])
+  adminId   String
+  members   User[]
+  createdAt DateTime    @default(now())
+  werds     GroupWerd[]
+
+  @@index([adminId])
+}
+
+model GroupWerd {
+  id           String                @id @default(cuid())
+  text         String
+  group        Group                 @relation(fields: [groupId], references: [id])
+  groupId      String
+  completions  GroupWerdCompletion[]
+  currentCount Int
+  createdAt    DateTime              @default(now())
+  streaks      GroupWerdStreak[]
+
+  @@unique([text, groupId])
+  @@index([groupId])
+}
+
+model GroupWerdStreak {
+  id            String    @id @default(cuid())
+  werd          GroupWerd @relation(fields: [werdId], references: [id])
+  werdId        String
+  user          User      @relation(fields: [userId], references: [id])
+  userId        String
+  currentStreak Int       @default(0)
+  longestStreak Int       @default(0)
+
+  @@index([userId])
+  @@index([werdId])
+}
+
+model GroupWerdCompletion {
+  id          String    @id @default(cuid())
+  werd        GroupWerd @relation(fields: [werdId], references: [id], onDelete: Cascade)
+  werdId      String
+  completedBy User      @relation(fields: [userId], references: [id])
+  userId      String
+  completedAt DateTime  @default(now())
+
+  @@index([werdId])
+  @@index([userId])
+}
+
+model Werd {
+  id              String       @id @default(cuid())
+  text            String       @unique
+  currentCount    Int
+  completed       Boolean      @default(false)
+  lastCompletedAt DateTime?
+  streak          Int          @default(0)
+  longestStreak   Int          @default(0)
+  createdAt       DateTime     @default(now())
+  completions     Completion[]
+  User            User         @relation(fields: [userId], references: [id])
+  userId          String
+
+  @@index([userId])
+}
+
+model Completion {
+  id          String   @id @default(cuid())
+  werd        Werd     @relation(fields: [werdId], references: [id], onDelete: Cascade)
+  werdId      String
+  completedAt DateTime @default(now())
+  count       Int
+
+  @@index([werdId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}

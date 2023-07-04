@@ -7,14 +7,22 @@ export async function POST(request: NextRequest, { params: { groupId } }: { para
   try {
     const data = await request.json();
     const { text, count } = postRequestValidator.parse(data);
-    const groupWerd = await prisma.groupWerd.create({ data: { text, currentCount: Number(count), groupId } });
+    const groupWerd = await prisma.groupWerd.create({
+      data: {
+        werd: { create: { text, count: Number(count) } },
+        group: { connect: { id: groupId } },
+      },
+    });
     return NextResponse.json(groupWerd, { status: 200 });
   } catch (error) {
     return NextResponse.json(error, { status: 500 });
   }
 }
 
-export async function DELETE(_request: NextRequest, { params: { groupId } }: { params: { groupId: string } }) {
+export async function DELETE(
+  _request: NextRequest,
+  { params: { groupId } }: { params: { groupId: string } }
+) {
   try {
     const session = await getServerSession();
     const group = await prisma.group.findUnique({ where: { id: groupId } });
