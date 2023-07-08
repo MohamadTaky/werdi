@@ -18,104 +18,84 @@ model User {
   sessions             Session[]
   ownedGroups          Group[]               @relation(name: "ownedGroups")
   groups               Group[]
-  userWerds            UserWerd[]
+  werds                Werd[]
   groupWerdCompletions GroupWerdCompletion[]
   groupWerdStreaks     GroupWerdStreak[]
 }
 
 model Group {
-  id         String      @id @default(cuid())
-  name       String
-  admin      User        @relation(name: "ownedGroups", fields: [adminId], references: [id])
-  adminId    String
-  members    User[]
-  werds GroupWerd[]
+  id      String      @id @default(cuid())
+  name    String
+  admin   User        @relation(name: "ownedGroups", fields: [adminId], references: [id])
+  adminId String
+  members User[]
+  werds   GroupWerd[]
 
   @@index([adminId])
 }
 
 model Werd {
-  id        String     @id @default(cuid())
-  text      String
-  count     Int
-  userWerd  UserWerd?
-  GroupWerd GroupWerd?
-  createdAt DateTime   @default(now())
-}
-
-model UserWerd {
-  id              String       @id @default(cuid())
-  user            User         @relation(fields: [userId], references: [id])
-  userId          String
-  werd            Werd         @relation(fields: [werdId], references: [id])
-  werdId          String       @unique
-  completions     Completion[]
-  streak          Streak       @relation(fields: [streakId], references: [id])
-  streakId        String       @unique
-  completed       Boolean      @default(false)
+  id              String           @id @default(cuid())
+  createdAt       DateTime         @default(now())
   lastCompletedAt DateTime?
+  completions     WerdCompletion[]
+  user            User             @relation(fields: [userId], references: [id])
+  userId          String
+  text            String
+  count           Int
+  currentStreak   Int              @default(0)
+  longestStreak   Int              @default(0)
+  completed       Boolean          @default(false)
 
   @@index([userId])
+}
+
+model WerdCompletion {
+  id          String   @id @default(cuid())
+  werd        Werd     @relation(fields: [werdId], references: [id])
+  werdId      String
+  completedAt DateTime @default(now())
+  count       Int
+
   @@index([werdId])
 }
 
 model GroupWerd {
   id          String                @id @default(cuid())
-  group       Group                 @relation(fields: [groupId], references: [id])
-  groupId     String
-  werd        Werd                  @relation(fields: [werdId], references: [id])
-  werdId      String                @unique
+  createdAt   DateTime              @default(now())
   completions GroupWerdCompletion[]
   streaks     GroupWerdStreak[]
+  group       Group                 @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId     String
+  text        String
+  count       Int
 
   @@index([groupId])
-  @@index([werdId])
-}
-
-model Completion {
-  id                  String               @id @default(cuid())
-  count               Int
-  completedAt         DateTime             @default(now())
-  werd                UserWerd?            @relation(fields: [werdId], references: [id])
-  werdId              String?
-  groupWerdCompletion GroupWerdCompletion?
-
-  @@index([werdId])
 }
 
 model GroupWerdCompletion {
-  id           String     @id @default(cuid())
-  groupWerd    GroupWerd  @relation(fields: [groupWerdId], references: [id])
-  groupWerdId  String
-  user         User       @relation(fields: [userId], references: [id])
-  userId       String
-  completion   Completion @relation(fields: [completionId], references: [id])
-  completionId String     @unique
+  id          String    @id @default(cuid())
+  groupWerd   GroupWerd @relation(fields: [groupWerdId], references: [id], onDelete: Cascade)
+  groupWerdId String
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  count       Int
+  completedAt DateTime  @default(now())
 
   @@index([groupWerdId])
   @@index([userId])
-  @@index([completionId])
-}
-
-model Streak {
-  id              String           @id @default(cuid())
-  currentStreak   Int              @default(0)
-  longestStreak   Int              @default(0)
-  userWerd        UserWerd?
-  groupWerdStreak GroupWerdStreak?
 }
 
 model GroupWerdStreak {
-  id          String    @id @default(cuid())
-  user        User      @relation(fields: [userId], references: [id])
-  userId      String
-  streak      Streak    @relation(fields: [streakId], references: [id])
-  streakId    String    @unique
-  GroupWerd   GroupWerd @relation(fields: [groupWerdId], references: [id])
-  groupWerdId String
+  id            String    @id @default(cuid())
+  GroupWerd     GroupWerd @relation(fields: [groupWerdId], references: [id], onDelete: Cascade)
+  groupWerdId   String
+  user          User      @relation(fields: [userId], references: [id])
+  userId        String
+  currentStreak Int       @default(1)
+  longestStreak Int       @default(1)
 
   @@index([userId])
-  @@index([streakId])
   @@index([groupWerdId])
 }
 

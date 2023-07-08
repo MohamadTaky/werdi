@@ -10,21 +10,17 @@ export const generateMetadata = async ({
 }: {
   params: { werdId: string };
 }): Promise<Metadata> => {
-  const userWerd = await prisma.userWerd.findUnique({ where: { id: werdId }, include: { werd: true } });
-  return { title: userWerd?.werd.text };
+  const werd = await prisma.werd.findUnique({ where: { id: werdId } });
+  return { title: werd?.text };
 };
 
 export default async function WerdPage({ params: { werdId } }: { params: { werdId: string } }) {
-  const userWerd = await prisma.userWerd.findUnique({
+  const userWerd = await prisma.werd.findUnique({
     where: { id: werdId },
-    include: { completions: true, werd: true, streak: true },
+    include: { completions: true },
   });
   if (!userWerd) notFound();
-  const {
-    werd: { text, count, createdAt },
-    streak: { currentStreak, longestStreak },
-    completions,
-  } = userWerd;
+  const { text, count, createdAt, currentStreak, longestStreak, completions } = userWerd;
   return (
     <>
       <h2 className="text-center text-lg font-semibold">{text}</h2>

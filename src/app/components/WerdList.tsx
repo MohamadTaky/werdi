@@ -5,10 +5,7 @@ import WerdItem from "./WerdItem/WerdItem";
 
 export default async function WerdList() {
   const session = (await getServerSession()) as Session;
-  const werds = await prisma.userWerd.findMany({
-    where: { userId: session.user.id },
-    include: { streak: true, werd: true },
-  });
+  const werds = await prisma.werd.findMany({ where: { userId: session.user.id } });
   return (
     <>
       {werds.reverse().map((werd) => (

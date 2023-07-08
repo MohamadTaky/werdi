@@ -2,24 +2,13 @@
 import { Check, CircleNotch, ListBullets } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Streak, UserWerd, Werd } from "@prisma/client";
+import { Werd } from "@prisma/client";
 import { differenceInDays } from "date-fns";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useCheckWerdMutation from "@/hooks/useCheckWerdMutation";
 
-type Props = UserWerd & {
-  werd: Werd;
-  streak: Streak;
-};
-
-export default function WerdItem({
-  werd: { text, count },
-  completed,
-  lastCompletedAt,
-  id,
-  streak: { currentStreak },
-}: Props) {
+export default function WerdItem({ text, count, completed, lastCompletedAt, id, currentStreak }: Werd) {
   const { refresh } = useRouter();
   const { mutate: checkWerd, isLoading: isChecking } = useCheckWerdMutation({ onSuccess: refresh });
   return (

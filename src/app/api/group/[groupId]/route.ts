@@ -9,8 +9,9 @@ export async function POST(request: NextRequest, { params: { groupId } }: { para
     const { text, count } = postRequestValidator.parse(data);
     const groupWerd = await prisma.groupWerd.create({
       data: {
-        werd: { create: { text, count: Number(count) } },
-        group: { connect: { id: groupId } },
+        groupId,
+        text,
+        count: Number(count),
       },
     });
     return NextResponse.json(groupWerd, { status: 200 });

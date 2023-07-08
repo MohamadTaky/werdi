@@ -19,6 +19,7 @@ async function checkGroupWerd({
   groupId,
   werdId,
   userId,
-}: putRequestType & { groupId: string; werdId: string }) {
-  await fetch(`/api/group/${groupId}/${werdId}`, { method: "PUT", body: JSON.stringify({ userId }) });
+  count,
+}: putRequestType & { groupId: string; werdId: string; userId: string }) {
+  await fetch(`/api/group/${groupId}/${werdId}`, { method: "PUT", body: JSON.stringify({ userId, count }) });
 }

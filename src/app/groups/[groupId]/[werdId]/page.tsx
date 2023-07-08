@@ -1,8 +1,19 @@
+import { Avatar, AvatarImage } from "@/components/ui/Avatar";
 import CalendarHeatMap from "@/components/ui/custom/CalendarHeatMap";
 import prisma from "@/lib/db";
 import { getServerSession } from "@/lib/nextAuth";
 import { format } from "date-fns";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+export async function generateMetadata({
+  params: { groupId, werdId },
+}: {
+  params: { groupId: string; werdId: string };
+}): Promise<Metadata> {
+  const werd = await prisma.groupWerd.findUnique({ where: { id: werdId } });
+  return { title: werd?.text };
+}
 
 export default async function GroupWerdPage({
   params: { groupId, werdId },
@@ -11,19 +22,11 @@ export default async function GroupWerdPage({
 }) {
   const groupWerd = await prisma.groupWerd.findUnique({
     where: { id: werdId },
-    include: {
-      completions: { include: { completion: true } },
-      streaks: { include: { user: true, streak: true } },
-      werd: true,
-    },
+    include: { completions: true, streaks: { include: { user: true } } },
   });
   const session = await getServerSession();
   if (!groupWerd) notFound();
-  const {
-    werd: { text, createdAt },
-    completions,
-    streaks,
-  } = groupWerd;
+  const { text, createdAt, completions, streaks } = groupWerd;
   return (
     <>
       <h2 className="text-center text-lg font-semibold">{text}</h2>
@@ -34,36 +37,30 @@ export default async function GroupWerdPage({
           spacing={2}
           data={completions
             .filter((completion) => completion.userId === session?.user.id)
-            .map(({ completion: { completedAt } }) => completedAt)}
+            .map(({ completedAt }) => completedAt)}
         />
       </div>
-      <table>
+      <table className="mt-4 text-xs md:text-base">
         <thead>
-          <th>User</th>
-          <th>Streak</th>
-          <th>Longest streak</th>
+          <th className="border p-2">المستخدم</th>
+          <th className="border p-2">الانجازات المتتالية</th>
+          <th className="border p-2">أطول سلسلة</th>
         </thead>
         <tbody>
-          {streaks.map(({ id, streak: { currentStreak, longestStreak }, user: { name } }) => (
+          {streaks.map(({ id, currentStreak, longestStreak, user: { name, image } }) => (
             <tr key={id}>
-              <td>{name}</td>
-              <td>{currentStreak}</td>
-              <td>{longestStreak}</td>
+              <td className="flex items-center justify-between gap-2 border p-2 text-center">
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={image as string} />
+                </Avatar>
+                {name}
+              </td>
+              <td className="border p-2 text-center">{currentStreak}</td>
+              <td className="border p-2 text-center">{longestStreak}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      {/* <div className="mt-2 grid grid-cols-2 gap-2 text-center text-lg md:grid-cols-3">
-        <p className="col-span-2 md:col-span-1">
-          <span className="block text-2xl font-bold text-blue-500">{currentCount}</span> مرة
-        </p>
-        <p>
-          <span className="block text-3xl font-bold text-blue-500">{longestStreak}</span> أطول سلسلة
-        </p>
-        <p>
-          <span className="block text-3xl font-bold text-blue-500">{streak}</span> إنجازات متتالية
-        </p>
-      </div> */}
     </>
   );
 }

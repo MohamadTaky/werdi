@@ -3,14 +3,14 @@ import { addDays } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(_request: NextRequest) {
-  const userWerds = await prisma.userWerd.findMany({
+  const userWerds = await prisma.werd.findMany({
     where: { lastCompletedAt: { lt: addDays(new Date(), -1) } },
   });
 
   for (const userWerd of userWerds) {
-    await prisma.userWerd.update({
+    await prisma.werd.update({
       where: { id: userWerd.id },
-      data: { completed: false, streak: { update: { currentStreak: 0 } } },
+      data: { completed: false, currentStreak: 0 },
     });
   }
 

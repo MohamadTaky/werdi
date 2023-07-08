@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { GroupWerd, GroupWerdCompletion, Werd } from "@prisma/client";
+import { GroupWerd, GroupWerdCompletion } from "@prisma/client";
 import { CircleNotch, Check, ListBullets } from "@/components/icons";
 import useCheckGroupWerdMutation from "@/hooks/useCheckGroupWerdMutation";
 import useDeleteGroupWerdMutation from "@/hooks/useDeleteGroupWerdMutation";
@@ -11,12 +11,11 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 
 type Props = GroupWerd & {
-  werd: Werd;
   completions: GroupWerdCompletion[];
   adminId: string;
 };
 
-export default function GroupWerdItem({ werd: { text, count }, groupId, adminId, id, completions }: Props) {
+export default function GroupWerdItem({ text, count, groupId, adminId, id, completions }: Props) {
   const { refresh } = useRouter();
   const pathname = usePathname();
   const { mutate: checkWerd, isLoading: checking } = useCheckGroupWerdMutation({ onSuccess: refresh });
@@ -38,7 +37,14 @@ export default function GroupWerdItem({ werd: { text, count }, groupId, adminId,
           variant="secondary"
           className={completed ? "bg-blue-500 disabled:opacity-100" : ""}
           disabled={checking || completed}
-          onClick={() => checkWerd({ groupId, werdId: id, userId: session.data?.user.id as string })}
+          onClick={() =>
+            checkWerd({
+              groupId,
+              werdId: id,
+              userId: session.data?.user.id as string,
+              count: count.toString(),
+            })
+          }
         >
           {checking ? (
             <CircleNotch className="animate-spin" size="24" weight="bold" />
