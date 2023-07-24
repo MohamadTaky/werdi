@@ -1,2 +1,2 @@
-import Loader from "@/components/ui/Loader";
+import Loader from "@/components/Loader";
 export default Loader;

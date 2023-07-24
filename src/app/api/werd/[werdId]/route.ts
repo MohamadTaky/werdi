@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import { getServerSession } from "@/lib/nextAuth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(_request: NextRequest, { params: { werdId } }: { params: { werdId: string } }) {
@@ -12,8 +13,10 @@ export async function DELETE(_request: NextRequest, { params: { werdId } }: { pa
 
 export async function PUT(_request: NextRequest, { params: { werdId } }: { params: { werdId: string } }) {
   try {
-    const werd = await prisma.werd.findUnique({ where: { id: werdId } });
-    if (!werd) throw new Error("requested werd not found");
+    const session = await getServerSession();
+    if (!session) return NextResponse.json({ message: "user is not signed in" }, { status: 401 });
+    const werd = await prisma.werd.findFirst({ where: { id: werdId, userId: session.user.id } });
+    if (!werd) return NextResponse.json({ message: "requested werd not found" }, { status: 404 });
     const updatedWerd = await prisma.werd.update({
       where: { id: werdId },
       data: {
@@ -24,7 +27,7 @@ export async function PUT(_request: NextRequest, { params: { werdId } }: { param
         completions: { create: { count: werd.count } },
       },
     });
-    return NextResponse.json(updatedWerd, { status: 200 });
+    return NextResponse.json(updatedWerd, { status: 201 });
   } catch (error) {
     return NextResponse.json(error, { status: 500 });
   }

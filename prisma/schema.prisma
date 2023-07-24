@@ -25,7 +25,7 @@ model User {
 
 model Group {
   id      String      @id @default(cuid())
-  name    String
+  name    String      @unique
   admin   User        @relation(name: "ownedGroups", fields: [adminId], references: [id])
   adminId String
   members User[]
@@ -47,16 +47,18 @@ model Werd {
   longestStreak   Int              @default(0)
   completed       Boolean          @default(false)
 
+  @@unique([userId, text])
   @@index([userId])
 }
 
 model WerdCompletion {
   id          String   @id @default(cuid())
-  werd        Werd     @relation(fields: [werdId], references: [id])
+  werd        Werd     @relation(fields: [werdId], references: [id], onDelete: Cascade)
   werdId      String
   completedAt DateTime @default(now())
   count       Int
 
+  @@unique([werdId, completedAt])
   @@index([werdId])
 }
 
@@ -70,6 +72,7 @@ model GroupWerd {
   text        String
   count       Int
 
+  @@unique([groupId, text])
   @@index([groupId])
 }
 
@@ -82,6 +85,7 @@ model GroupWerdCompletion {
   count       Int
   completedAt DateTime  @default(now())
 
+  @@unique([groupWerdId, userId, completedAt])
   @@index([groupWerdId])
   @@index([userId])
 }
@@ -95,6 +99,7 @@ model GroupWerdStreak {
   currentStreak Int       @default(1)
   longestStreak Int       @default(1)
 
+  @@unique([groupWerdId, userId])
   @@index([userId])
   @@index([groupWerdId])
 }

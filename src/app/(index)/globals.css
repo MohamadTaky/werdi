@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-rounded::-webkit-scrollbar-thumb {
+    @apply rounded-lg;
+  }
+  .h-fill-available {
+    @apply h-screen;
+    height: -webkit-fill-available;
+  }
+}

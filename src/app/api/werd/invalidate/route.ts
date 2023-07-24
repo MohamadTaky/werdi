@@ -1,18 +1,11 @@
 import prisma from "@/lib/db";
-import { addDays } from "date-fns";
+import { addDays, endOfDay } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(_request: NextRequest) {
-  const userWerds = await prisma.werd.findMany({
-    where: { lastCompletedAt: { lt: addDays(new Date(), -1) } },
+  await prisma.werd.updateMany({
+    where: { lastCompletedAt: { lt: endOfDay(addDays(new Date(), -1)) } },
+    data: { completed: false, currentStreak: 0 },
   });
-
-  for (const userWerd of userWerds) {
-    await prisma.werd.update({
-      where: { id: userWerd.id },
-      data: { completed: false, currentStreak: 0 },
-    });
-  }
-
   return NextResponse.json({}, { status: 200 });
 }

@@ -1,37 +1,29 @@
 import { getServerSession } from "@/lib/nextAuth";
 import ReactQueryProvider from "@/lib/ReactQueryProvider";
+import { Metadata } from "next";
 import { Noto_Sans_Arabic } from "next/font/google";
+import { ReactNode } from "react";
 import SessionProvider from "../lib/SessionProvider";
-import Navbar from "./components/Navbar";
-import Topbar from "./components/Topbar";
-import "./globals.css";
+import Navbar from "./(index)/components/Navbar";
+import Topbar from "./(index)/components/Topbar";
+import "./(index)/globals.css";
 
 const font = Noto_Sans_Arabic({ subsets: ["arabic"] });
-export const metadata = {
-  title: "werdi",
-};
-
-export default async function RootLayout({
-  children,
-  auth,
-}: {
-  children: React.ReactNode;
-  auth: React.ReactNode;
-}) {
+export const metadata: Metadata = { title: "werdi" };
+export default async function RootLayout({ children, auth }: { children: ReactNode; auth: ReactNode }) {
   const session = await getServerSession();
-
   return (
-    <html lang="ar" dir="rtl">
-      <body className={font.className}>
+    <html className="h-fill-available" lang="ar" dir="rtl">
+      <body className={`h-full ${font.className}`}>
         {session ? (
           <SessionProvider session={session}>
             <ReactQueryProvider>
-              <main className="grid h-screen grid-rows-[auto_1fr]">
+              <main className="grid h-full grid-rows-[auto_1fr]">
                 <Topbar />
-                <div className="relative flex w-screen flex-col p-3">
+                <section className="scrollbar-rounded relative flex scroll-m-4 flex-col overflow-auto p-3 scrollbar-thin scrollbar-thumb-gray-300">
                   <Navbar />
                   {children}
-                </div>
+                </section>
               </main>
             </ReactQueryProvider>
           </SessionProvider>

@@ -1,14 +1,17 @@
 "use client";
-import { Button, ButtonProps } from "@/components/ui/Button";
-import useLeaveGroupMutation from "@/hooks/useLeaveGroupMutation";
+import LoadedButton from "@/components/LoadedButton";
+import useTransitionMutation from "@/lib/react-query/useTransitionMutation";
 import { useRouter } from "next/navigation";
+import { ButtonHTMLAttributes } from "react";
+import leaveGroupMutation from "../mutations/leaveGroupMutation";
 
-interface Props extends ButtonProps {
+type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   groupId: string;
-}
+};
 export default function LeaveGroupButton({ groupId, children, ...props }: Props) {
   const { back, refresh } = useRouter();
-  const { mutate, isLoading } = useLeaveGroupMutation({
+  const { mutate, isLoading } = useTransitionMutation({
+    mutationFn: leaveGroupMutation,
     onSuccess: () => {
       back();
       refresh();
@@ -16,8 +19,8 @@ export default function LeaveGroupButton({ groupId, children, ...props }: Props)
   });
 
   return (
-    <Button onClick={() => mutate(groupId)} disabled={isLoading} {...props}>
+    <LoadedButton onClick={() => mutate({ groupId })} variant="danger" isLoading={isLoading} {...props}>
       {children}
-    </Button>
+    </LoadedButton>
   );
 }
