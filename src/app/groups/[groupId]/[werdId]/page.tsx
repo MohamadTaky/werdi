@@ -59,7 +59,7 @@ export default async function GroupWerdPage({
       <CalendarHeatMap className="my-2" data={userCompletions.map(({ completedAt }) => completedAt)} />
       <List className="m-0">
         {members.map(({ name, id, image }, i) => (
-          <ListItem index={i} className="gap-2">
+          <ListItem key={id} index={i} className="gap-2">
             <Link className="flex-1" href={`groups/${groupId}/${werdId}/${id}`}>
               {name}
             </Link>
