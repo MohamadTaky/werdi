@@ -10,6 +10,7 @@ import {
   format,
   getDay,
   isSameDay,
+  isToday,
 } from "date-fns";
 import ar from "@/lib/date-fns/ar";
 import { HTMLAttributes } from "react";
@@ -92,7 +93,7 @@ export default function CalendarHeatMap({ cellSize = 18, spacing = 2, data, clas
             y={yScale(getDay(day))}
             rx="2"
             className={`${data.some((date) => isSameDay(date, day)) ? "fill-blue-400" : "fill-gray-300"} ${
-              isSameDay(today, day) ? "stroke stroke-blue-600" : ""
+              isToday(day) ? "stroke stroke-blue-600" : ""
             }`}
           />
         ))}
