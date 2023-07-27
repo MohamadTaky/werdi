@@ -44,7 +44,7 @@ export default function CalendarHeatMap({ cellSize = 18, spacing = 2, data, clas
     .map((_v, i) => addMonths(startOfYear(today), i));
   const xScale = scaleLinear()
     .range([width - cellSize - margins.right, margins.left])
-    .domain([0, differenceInWeeks(days.at(-1) as Date, days[0])]);
+    .domain([0, differenceInWeeks(days.at(-1)!, days[0])]);
   const yScale = scaleLinear()
     .range([margins.top, height - cellSize - margins.bottom])
     .domain([0, 6]);

@@ -50,7 +50,7 @@ export default function AddGroupMemberForm({ adminId, members }: Props) {
   });
   const handleCheckbox = (e: ChangeEvent<HTMLInputElement>, user: SelectableUser) => {
     setUsers((prev) => {
-      const changedUser = prev.find((u) => u.id === user.id) as SelectableUser;
+      const changedUser = prev.find((u) => u.id === user.id)!;
       changedUser.selected = e.target.checked;
       return prev;
     });
@@ -96,7 +96,7 @@ export default function AddGroupMemberForm({ adminId, members }: Props) {
                     className="flex items-center gap-2 px-3 py-2 hover:bg-gray-200"
                   >
                     <Avatar.Root asChild className="h-8 w-8 overflow-hidden rounded-full">
-                      <Avatar.Image src={user.image as string} alt={user.name as string} />
+                      <Avatar.Image src={user.image ?? ""} alt={user.name ?? ""} />
                     </Avatar.Root>
                     <span>{user.name}</span>
                     {session.data?.user.id === adminId ? (

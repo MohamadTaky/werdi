@@ -26,7 +26,7 @@ const Button = forwardRef(
       variants[variant],
       className
     );
-    return asChild ? (
+  return asChild ? (
       <Slot ref={ref} className={className} {...props}>
         {children}
       </Slot>

@@ -43,10 +43,7 @@ export default async function GroupWerdPage({
       },
     }),
   ]);
-  const werd = group?.werds[0] as GroupWerd & {
-    completions: GroupWerdCompletion[];
-    streaks: GroupWerdStreak[];
-  };
+  const werd = group?.werds[0];
   if (!werd) notFound();
   const userCompletions = werd.completions.filter((completion) => completion.userId === session.user.id);
   const members = [...(group?.members as User[]), group?.admin] as User[];

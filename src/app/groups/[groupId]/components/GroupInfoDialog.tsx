@@ -53,7 +53,7 @@ export default function GroupInfoDialog({ group: { members, admin, id: groupId }
         {[admin, ...members].map(({ id, name, image }) => (
           <ListItem key={id} className="max-w-full gap-2">
             <Avatar.Root className="h-8 w-8 overflow-hidden rounded-full">
-              <Avatar.AvatarImage src={image as string} />
+              <Avatar.AvatarImage src={image ?? ""} />
               <Avatar.Fallback>{name?.slice(0, 2)}</Avatar.Fallback>
             </Avatar.Root>
             <p>{name}</p>
