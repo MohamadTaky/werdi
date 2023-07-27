@@ -3,13 +3,13 @@ import { motion } from "framer-motion";
 import { CircleDashed, Moon } from "lucide-react";
 
 export default function Loader() {
-  const increments = 6;
+  const increments = 8;
   const array = Array(increments)
     .fill(0)
     .map((_v, i) => (i * 360) / increments);
   return (
     <div className="m-auto flex flex-col items-center opacity-80">
-      <Moon size="50" className="fill-black"/>
+      <Moon size="50" className="fill-black" />
       <div className="-m-2 h-12 w-1 rounded-sm bg-black" />
       <div className="relative h-24 w-24">
         <motion.div transition={{ repeat: Infinity, duration: 3 }} animate={{ rotate: array }}>
