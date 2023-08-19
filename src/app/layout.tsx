@@ -9,7 +9,7 @@ import Topbar from "./(index)/components/Topbar";
 import "./(index)/globals.css";
 
 const font = Noto_Sans_Arabic({ subsets: ["arabic"] });
-export const metadata: Metadata = { title: "werdi" };
+export const metadata: Metadata = { title: "وِردي" };
 export default async function RootLayout({ children, auth }: { children: ReactNode; auth: ReactNode }) {
   const session = await getServerSession();
   return (
