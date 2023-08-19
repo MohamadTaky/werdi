@@ -13,7 +13,7 @@ export default function Avatar({ image, fallback, className, ...props }: AvatarP
       <div
         className={cn("grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-gray-300", className)}
       >
-        <Image src={image} className="max-w-full" />
+        <Image src={image} className="max-w-full" alt={fallback} />
         <AvatarFallback className="text-xs" delayMs={10000}>
           {fallback}
         </AvatarFallback>
