@@ -1,8 +1,8 @@
-import * as RadixPopover from "@radix-ui/react-popover";
+import { Root, Trigger, Portal, Content, Arrow, PopoverProps } from "@radix-ui/react-popover";
 import { AnimatePresence, motion } from "framer-motion";
 import { Dispatch, ReactNode, SetStateAction } from "react";
 
-type Props = RadixPopover.PopoverProps & {
+type Props = PopoverProps & {
   trigger: ReactNode;
   locked?: boolean;
   open: boolean;
@@ -11,12 +11,12 @@ type Props = RadixPopover.PopoverProps & {
 
 export default function Popover({ trigger, children, locked, open, ...props }: Props) {
   return (
-    <RadixPopover.Root open={open} {...props}>
-      <RadixPopover.Trigger asChild>{trigger}</RadixPopover.Trigger>
+    <Root open={open} {...props}>
+      <Trigger asChild>{trigger}</Trigger>
       <AnimatePresence>
         {open && (
-          <RadixPopover.Portal forceMount>
-            <RadixPopover.Content
+          <Portal forceMount>
+            <Content
               onEscapeKeyDown={(e) => locked && e.preventDefault()}
               onPointerDownOutside={(e) => locked && e.preventDefault()}
               sideOffset={10}
@@ -29,12 +29,12 @@ export default function Popover({ trigger, children, locked, open, ...props }: P
                 exit={{ opacity: 0, scaleY: 0 }}
               >
                 {children}
-                <RadixPopover.Arrow className="fill-gray-300" width="20" height="10" />
+                <Arrow className="fill-gray-300" width="20" height="10" />
               </motion.div>
-            </RadixPopover.Content>
-          </RadixPopover.Portal>
+            </Content>
+          </Portal>
         )}
       </AnimatePresence>
-    </RadixPopover.Root>
+    </Root>
   );
 }

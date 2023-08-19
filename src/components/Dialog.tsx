@@ -1,11 +1,21 @@
 "use client";
-import * as RadixDialog from "@radix-ui/react-dialog";
+import {
+  DialogProps as RadixDialogProps,
+  Root,
+  Trigger,
+  Portal,
+  Overlay,
+  Content,
+  Close,
+  Title,
+  Description,
+} from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { ReactNode } from "react";
 import Button from "./Button";
 
-type DialogProps = RadixDialog.DialogProps & {
+type DialogProps = RadixDialogProps & {
   trigger: ReactNode;
   title?: string;
   description?: string;
@@ -23,19 +33,19 @@ export default function Dialog({
   ...props
 }: DialogProps) {
   return (
-    <RadixDialog.Root open={open} onOpenChange={onOpenChange} {...props}>
-      <RadixDialog.Trigger asChild>{trigger}</RadixDialog.Trigger>
+    <Root open={open} onOpenChange={onOpenChange} {...props}>
+      <Trigger asChild>{trigger}</Trigger>
       <AnimatePresence>
         {open && (
-          <RadixDialog.Portal forceMount>
-            <RadixDialog.Overlay asChild>
+          <Portal forceMount>
+            <Overlay asChild>
               <motion.div
                 className="absolute inset-0 z-50 grid place-items-center bg-black bg-opacity-50"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <RadixDialog.Content
+                <Content
                   onEscapeKeyDown={(e) => locked && e.preventDefault()}
                   onPointerDownOutside={(e) => locked && e.preventDefault()}
                   asChild
@@ -46,7 +56,7 @@ export default function Dialog({
                     animate={{ scale: 1 }}
                     exit={{ scale: 0.9 }}
                   >
-                    <RadixDialog.Close
+                    <Close
                       onClick={() => onOpenChange?.(false)}
                       className="absolute left-4 top-4 z-10 text-gray-500"
                       asChild
@@ -54,23 +64,19 @@ export default function Dialog({
                       <Button shape="circle" variant="ghost">
                         <X size="16" strokeWidth="3" />
                       </Button>
-                    </RadixDialog.Close>
-                    {title && (
-                      <RadixDialog.Title className="mb-2 text-2xl font-bold">{title}</RadixDialog.Title>
-                    )}
+                    </Close>
+                    {title && <Title className="mb-2 text-2xl font-bold">{title}</Title>}
                     {description && (
-                      <RadixDialog.Description className="mb-2 font-semibold text-gray-500">
-                        {description}
-                      </RadixDialog.Description>
+                      <Description className="mb-2 font-semibold text-gray-500">{description}</Description>
                     )}
                     {children}
                   </motion.div>
-                </RadixDialog.Content>
+                </Content>
               </motion.div>
-            </RadixDialog.Overlay>
-          </RadixDialog.Portal>
+            </Overlay>
+          </Portal>
         )}
       </AnimatePresence>
-    </RadixDialog.Root>
+    </Root>
   );
 }
