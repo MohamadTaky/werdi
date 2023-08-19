@@ -6,6 +6,7 @@ import AddGroupMemberForm from "./components/AddGroupMemberForm";
 import AddGroupWerdForm from "./components/AddGroupWerdForm";
 import GroupInfoDialog from "./components/GroupInfoDialog";
 import GroupWerdList from "./components/GroupWerdList";
+import Section from "@/components/Section";
 
 export async function generateMetadata({
   params: { groupId },
@@ -29,14 +30,14 @@ export default async function GroupPage({ params: { groupId } }: { params: { gro
   if (!group) notFound();
   const { name, werds } = group;
   return (
-    <>
+    <Section container="flex" className="p-0 pt-3">
       <h2 className="text-center text-2xl font-semibold">{name}</h2>
-      <div className="my-4 flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-4">
         <AddGroupMemberForm {...group} />
         <GroupInfoDialog group={group} />
       </div>
       <GroupWerdList werds={werds} />
       <AddGroupWerdForm />
-    </>
+    </Section>
   );
 }

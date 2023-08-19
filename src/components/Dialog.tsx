@@ -51,7 +51,7 @@ export default function Dialog({
                       className="absolute left-4 top-4 z-10 text-gray-500"
                       asChild
                     >
-                      <Button className="p-0 rounded-full" variant="ghost">
+                      <Button shape="circle" variant="ghost">
                         <X size="16" strokeWidth="3" />
                       </Button>
                     </RadixDialog.Close>

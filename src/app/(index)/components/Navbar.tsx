@@ -29,10 +29,10 @@ export default function Navbar() {
             exit={{ translateX: "100%" }}
             className="fixed inset-0 top-[50px] z-20 h-full w-48 border-2 border-l-gray-300 bg-gray-200 shadow-xl md:w-52"
           >
-            <ActiveLink href="/">
+            <ActiveLink matches={["werd", ""]} href="/">
               <Home /> الرئيسة
             </ActiveLink>
-            <ActiveLink href="/groups">
+            <ActiveLink matches={["groups"]} href="/groups">
               <Users2 /> المجموعات
             </ActiveLink>
             <Button
@@ -41,7 +41,7 @@ export default function Navbar() {
                 await signOut();
                 replace("/");
               }}
-              className="w-full hover:bg-gray-300 focus:bg-gray-300 active:bg-gray-400"
+              className="w-full ring-offset-0 hover:bg-gray-300 focus:bg-gray-300 focus:ring-0 active:bg-gray-400"
             >
               <LogOut /> تسجيل الخروج
             </Button>

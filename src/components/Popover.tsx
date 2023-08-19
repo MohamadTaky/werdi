@@ -1,10 +1,12 @@
 import * as RadixPopover from "@radix-ui/react-popover";
 import { AnimatePresence, motion } from "framer-motion";
-import { ReactNode } from "react";
+import { Dispatch, ReactNode, SetStateAction } from "react";
 
 type Props = RadixPopover.PopoverProps & {
   trigger: ReactNode;
   locked?: boolean;
+  open: boolean;
+  onOpenChange: Dispatch<SetStateAction<boolean>>;
 };
 
 export default function Popover({ trigger, children, locked, open, ...props }: Props) {

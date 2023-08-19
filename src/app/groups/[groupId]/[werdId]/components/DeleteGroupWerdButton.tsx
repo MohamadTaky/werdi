@@ -4,18 +4,14 @@ import Button from "@/components/Button";
 import LoadedButton from "@/components/LoadedButton";
 import useTransitionMutation from "@/lib/react-query/useTransitionMutation";
 import { X } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import deleteGroupWerdMutation from "../mutations/deleteGroupWerdMutation";
 
-type Props = {
-  groupId: string;
-  werdId: string;
-};
-
-export default function DeleteGroupWerdButton({ groupId, werdId }: Props) {
+export default function DeleteGroupWerdButton() {
   const { replace, refresh } = useRouter();
   const pathname = usePathname();
+  const { groupId, werdId } = useParams();
   const { mutate, isLoading } = useTransitionMutation({
     mutationFn: deleteGroupWerdMutation,
     onSuccess: () => {

@@ -1,4 +1,5 @@
 import CalendarHeatMap from "@/components/CalendarHeatMap";
+import Section from "@/components/Section";
 import prisma from "@/lib/db";
 import { notFound } from "next/navigation";
 
@@ -23,13 +24,13 @@ export default async function Page({ params: { userId, werdId } }: Props) {
   const { name } = user;
 
   return (
-    <>
-      <h2 className="mb-2">{name} :</h2>
-      <h2 className="mb-2 text-center text-lg font-semibold">{text}</h2>
+    <Section container="flex">
+      <h2>{name} :</h2>
+      <h2 className="text-center text-lg font-semibold">{text}</h2>
       <p className="text-center">
         <span className="block text-2xl font-bold text-blue-500">{count}</span> مرة
       </p>
-      <CalendarHeatMap className="my-2" data={completions.map((completion) => completion.completedAt)} />
+      <CalendarHeatMap data={completions.map((completion) => completion.completedAt)} />
       <div className="grid grid-cols-2 gap-2 text-center md:grid-cols-2">
         <p>
           <span className="block text-xl font-bold text-blue-500">{currentStreak}</span> إنجازات متتالية
@@ -38,6 +39,6 @@ export default async function Page({ params: { userId, werdId } }: Props) {
           <span className="block text-xl font-bold text-blue-500">{longestStreak}</span> أطول سلسلة
         </p>
       </div>
-    </>
+    </Section>
   );
 }

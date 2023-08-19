@@ -30,9 +30,7 @@ export default function GroupInfoDialog({ group: { members, admin, id: groupId }
   const [removing, setRemoving] = useState(false);
   const [selectedUsers, setSelectedusers] = useState<string[]>([]);
   const toggle = () => setRemoving((prev) => !prev);
-  useEffect(() => {
-    setRemoving(false);
-  }, [open]);
+  useEffect(() => setRemoving(false), [open]);
   const handleCheckbox = (e: ChangeEvent<HTMLInputElement>, user: string) => {
     setSelectedusers((prev) => (e.target.checked ? [...prev, user] : prev.filter((u) => u !== user)));
   };
@@ -42,15 +40,15 @@ export default function GroupInfoDialog({ group: { members, admin, id: groupId }
       open={open}
       onOpenChange={setOpen}
       trigger={
-        <Button className="rounded-full p-2" variant="outline">
+        <Button shape="circle" variant="outline">
           <ListIcon size="24" />
         </Button>
       }
       title="الأعضاء"
-      description={`${members.length + 1} عضو`}
+      description={`${members.length} عضو`}
     >
       <List className="m-0 my-2 min-h-[200px]">
-        {[admin, ...members].map(({ id, name, image }) => (
+        {members.map(({ id, name, image }) => (
           <ListItem key={id} className="max-w-full gap-2">
             <Avatar.Root className="h-8 w-8 overflow-hidden rounded-full">
               <Avatar.AvatarImage src={image ?? ""} />
@@ -73,13 +71,10 @@ export default function GroupInfoDialog({ group: { members, admin, id: groupId }
               إزالة الأعضاء
             </Button>
           )}
-          <DeleteGroupButton groupId={groupId} />
+          <DeleteGroupButton />
         </>
       ) : (
-        <LeaveGroupButton groupId={groupId}>
-          <LogOut />
-          مغادرة
-        </LeaveGroupButton>
+        <LeaveGroupButton/>
       )}
     </Dialog>
   );

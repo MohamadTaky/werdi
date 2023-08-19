@@ -8,8 +8,8 @@ type Props = { werds: Werd[] };
 export default function WerdList({ werds }: Props) {
   return (
     <List>
-      {werds.map((werd, i) => (
-        <WerdListItem key={werd.id} werd={werd} index={i} />
+      {werds.map((werd) => (
+        <WerdListItem key={werd.id} werd={werd} />
       ))}
     </List>
   );

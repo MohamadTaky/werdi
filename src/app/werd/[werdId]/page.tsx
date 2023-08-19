@@ -3,6 +3,7 @@ import prisma from "@/lib/db";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import DeleteWerdButton from "./components/DeleteWerdButton";
+import Section from "@/components/Section";
 
 export const generateMetadata = async ({
   params: { werdId },
@@ -14,19 +15,16 @@ export const generateMetadata = async ({
 };
 
 export default async function WerdPage({ params: { werdId } }: { params: { werdId: string } }) {
-  const userWerd = await prisma.werd.findUnique({
-    where: { id: werdId },
-    include: { completions: true },
-  });
+  const userWerd = await prisma.werd.findUnique({ where: { id: werdId }, include: { completions: true } });
   if (!userWerd) notFound();
   const { text, count, currentStreak, longestStreak, completions } = userWerd;
   return (
-    <>
-      <h2 className="mb-2 text-center text-lg font-semibold">{text}</h2>
+    <Section container="flex">
+      <h2 className="text-center text-lg font-semibold">{text}</h2>
       <p className="text-center">
         <span className="block text-2xl font-bold text-blue-500">{count}</span> مرة
       </p>
-      <CalendarHeatMap className="my-2" data={completions.map((completion) => completion.completedAt)} />
+      <CalendarHeatMap data={completions.map((completion) => completion.completedAt)} />
       <div className="grid grid-cols-2 gap-2 text-center md:grid-cols-2">
         <p>
           <span className="block text-xl font-bold text-blue-500">{currentStreak}</span> إنجازات متتالية
@@ -36,6 +34,6 @@ export default async function WerdPage({ params: { werdId } }: { params: { werdI
         </p>
       </div>
       <DeleteWerdButton id={werdId} />
-    </>
+    </Section>
   );
 }

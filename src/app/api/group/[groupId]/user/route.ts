@@ -1,6 +1,6 @@
 import prisma from "@/lib/db";
 import { getServerSession } from "@/lib/nextAuth";
-import { postRequestValidator } from "@/lib/validators/group/user/groupUser";
+import { deleteRequestValidator, postRequestValidator } from "@/lib/validators/group/user/groupUser";
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 
@@ -30,19 +30,33 @@ export async function POST(request: NextRequest, { params: { groupId } }: { para
   }
 }
 
-export async function DELETE(
-  _request: NextRequest,
-  { params: { groupId } }: { params: { groupId: string } }
-) {
+export async function DELETE(request: NextRequest, { params: { groupId } }: { params: { groupId: string } }) {
   try {
-    const session = await getServerSession();
+    const [data, session, group] = await Promise.all([
+      request.json(),
+      getServerSession(),
+      prisma.group.findUnique({ where: { id: groupId } }),
+    ]);
+    const { userIds } = deleteRequestValidator.parse(data);
     if (!session) return NextResponse.json({ message: "user is not signed in" }, { status: 401 });
-    const group = await prisma.group.findUnique({ where: { id: groupId } });
-    if (!group) return NextResponse.json({ group: "requested group not found" }, { status: 404 });
-    await prisma.group.update({
-      where: { id: groupId },
-      data: { members: { delete: { id: session?.user.id } } },
-    });
+    if (!group) return NextResponse.json({ message: "requested group not found" }, { status: 404 });
+
+    if (userIds) {
+      if (session.user.id !== group.adminId)
+        return NextResponse.json(
+          { message: "user is not authorized to perform this action" },
+          { status: 404 }
+        );
+      await prisma.group.update({
+        where: { id: groupId },
+        data: { members: { disconnect: userIds.map((id) => ({ id })) } },
+      });
+    } else {
+      await prisma.group.update({
+        where: { id: groupId },
+        data: { members: { disconnect: { id: session?.user.id } } },
+      });
+    }
     return new Response(null, { status: 204 });
   } catch (error) {
     if (error instanceof ZodError) return NextResponse.json(error, { status: 400 });

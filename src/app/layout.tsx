@@ -1,5 +1,5 @@
-import { getServerSession } from "@/lib/nextAuth";
 import ReactQueryProvider from "@/lib/ReactQueryProvider";
+import { getServerSession } from "@/lib/nextAuth";
 import { Metadata } from "next";
 import { Noto_Sans_Arabic } from "next/font/google";
 import { ReactNode } from "react";
@@ -14,16 +14,14 @@ export default async function RootLayout({ children, auth }: { children: ReactNo
   const session = await getServerSession();
   return (
     <html className="h-fill-available" lang="ar" dir="rtl">
-      <body className={`h-full ${font.className}`}>
+      <body className={`h-full ${font.className} ${session ? "grid grid-rows-[auto_1fr]" : ""}`}>
         {session ? (
           <SessionProvider session={session}>
             <ReactQueryProvider>
-              <main className="grid h-full grid-rows-[auto_1fr]">
-                <Topbar />
-                <section className="scrollbar-rounded relative flex scroll-m-4 flex-col overflow-auto p-3 scrollbar-thin scrollbar-thumb-gray-300">
-                  <Navbar />
-                  {children}
-                </section>
+              <Topbar />
+              <Navbar />
+              <main className="scrollbar-rounded relative scroll-m-4 overflow-auto scrollbar-thin scrollbar-thumb-gray-300">
+                {children}
               </main>
             </ReactQueryProvider>
           </SessionProvider>

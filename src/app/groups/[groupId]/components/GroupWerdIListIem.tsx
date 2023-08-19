@@ -10,10 +10,9 @@ import checkGroupWerdMutation from "../mutations/checkGroupWerdMutation";
 
 type Props = GroupWerd & {
   completions: GroupWerdCompletion[];
-  index: number;
 };
 
-export default function GroupWerdItem({ text, id, groupId, count, completions, index }: Props) {
+export default function GroupWerdListItem({ text, id, groupId, count, completions }: Props) {
   const { refresh } = useRouter();
   const { mutate, isLoading } = useTransitionMutation({
     mutationFn: checkGroupWerdMutation,
@@ -22,14 +21,15 @@ export default function GroupWerdItem({ text, id, groupId, count, completions, i
   const session = useSession();
   const completed = completions.some((completion) => completion.userId === session.data?.user.id);
   return (
-    <ListItem index={index}>
+    <ListItem>
       <Link className="flex-1 space-y-2" href={`groups/${groupId}/${id}`}>
         <p>{text}</p>
         <p className="text-gray-500">{count} مرة</p>
       </Link>
       <LoadedButton
-        fallback={<Loader2 size="20" className="animate-spin text-black" />}
-        className={`grid place-items-center rounded-full border border-gray-200 p-1 transition duration-200 disabled:opacity-100 ${
+        shape="circle"
+        fallback={<Loader2 className="animate-spin text-black" />}
+        className={`grid place-items-center border border-gray-200 transition duration-200 disabled:opacity-100 p-1.5 ${
           completed ? "bg-blue-500" : "bg-gray-100"
         }`}
         isLoading={isLoading}

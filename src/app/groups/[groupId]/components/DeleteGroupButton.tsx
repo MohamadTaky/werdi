@@ -1,23 +1,20 @@
 "use client";
 import LoadedButton from "@/components/LoadedButton";
-import { useRouter } from "next/navigation";
-import { ButtonHTMLAttributes, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
 import AlertDialog from "@/components/AlertDialog";
 import Button from "@/components/Button";
 import { X } from "lucide-react";
 import useTransitionMutation from "@/lib/react-query/useTransitionMutation";
 import deleteGroupMutation from "../mutations/deleteGroupMutation";
 
-type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  groupId: string;
-};
-
-export default function DeleteGroupButton({ groupId }: Props) {
-  const { back, refresh } = useRouter();
+export default function DeleteGroupButton() {
+  const { back } = useRouter();
+  const { groupId } = useParams();
   const [open, setOpen] = useState(false);
   const { mutate, isLoading } = useTransitionMutation({
     mutationFn: deleteGroupMutation,
-    onSuccess: refresh,
+    onSuccess: back,
   });
 
   return (
@@ -33,7 +30,12 @@ export default function DeleteGroupButton({ groupId }: Props) {
         </Button>
       }
       action={
-        <LoadedButton className="flex" isLoading={isLoading} variant="danger" onClick={() => mutate({ groupId })}>
+        <LoadedButton
+          className="flex"
+          isLoading={isLoading}
+          variant="danger"
+          onClick={() => mutate({ groupId })}
+        >
           <X />
           حذف
         </LoadedButton>

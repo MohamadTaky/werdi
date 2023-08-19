@@ -1,25 +1,20 @@
 "use client";
-import * as Avatar from "@radix-ui/react-avatar";
+import Avatar from "@/components/Avatar";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Topbar() {
   const session = useSession();
-  const searchParams = useSearchParams();
+  const open = useSearchParams().get("nav") === "open";
   const pathname = usePathname();
-  const isNavOpen = searchParams.get("nav") === "open";
+  const username = session.data?.user.name!;
 
   return (
-    <header className="sticky top-0 z-50 flex items-center gap-2 border-b-2 bg-gray-100 px-3 py-2 shadow-md">
-      <Link className="flex items-center gap-2" href={`${pathname}?nav=${isNavOpen ? "close" : "open"}`}>
-        <Avatar.Root className="h-8 w-8 overflow-hidden rounded-full">
-          <Avatar.Image src={session.data?.user.image ?? ""} />
-          <Avatar.Fallback delayMs={10000}>{session.data?.user.name?.slice(0, 2)}</Avatar.Fallback>
-        </Avatar.Root>
-        <h2 dir="auto" className="mt-1 font-bold">
-          {session.data?.user.name}
-        </h2>
+    <header className="z-50 border-b-2 bg-gray-100 px-3 py-2 shadow-md">
+      <Link className="flex items-center gap-2 w-fit" href={`${pathname}?nav=${open ? "close" : "open"}`}>
+        <Avatar image={session.data?.user.image ?? ""} fallback={username?.slice(0, 2)} />
+        <h2 className="mt-1 font-bold">{username}</h2>
       </Link>
     </header>
   );

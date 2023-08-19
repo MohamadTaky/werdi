@@ -30,6 +30,10 @@ export const authOptions: AuthOptions = {
       return session;
     },
   },
+  pages: {
+    error: "/",
+    signIn: "/",
+  },
 };
 
 export async function getServerSession() {

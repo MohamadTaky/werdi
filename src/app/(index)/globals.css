@@ -9,9 +9,6 @@
 }
 
 @layer utilities {
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
   .scrollbar-rounded::-webkit-scrollbar-thumb {
     @apply rounded-lg;
   }

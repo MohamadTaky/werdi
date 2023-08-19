@@ -1,11 +1,10 @@
 "use client";
-import Button from "@/components/Button";
+import GlobalAddButton from "@/components/GlobalAddButton";
 import Input from "@/components/Input";
 import LoadedButton from "@/components/LoadedButton";
 import Popover from "@/components/Popover";
 import useTransitionMutation from "@/lib/react-query/useTransitionMutation";
 import { postRequestValidator } from "@/lib/validators/groupWerd";
-import { Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import addGroupWerdMutation from "../mutations/addGroupWerdMutation";
@@ -30,16 +29,7 @@ export default function AddGroupWerdForm() {
   }
 
   return (
-    <Popover
-      open={open}
-      onOpenChange={setOpen}
-      locked={isLoading}
-      trigger={
-        <Button className="fixed bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full p-2">
-          <Plus size="28" />
-        </Button>
-      }
-    >
+    <Popover open={open} onOpenChange={setOpen} locked={isLoading} trigger={<GlobalAddButton />}>
       <form onSubmit={handleSubmit}>
         <fieldset disabled={isLoading} className="space-y-4 rounded-md transition disabled:opacity-50">
           <Input id="text" name="text" placeholder="الذِكر" />

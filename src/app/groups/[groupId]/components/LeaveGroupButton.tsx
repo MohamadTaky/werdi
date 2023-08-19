@@ -1,15 +1,13 @@
 "use client";
 import LoadedButton from "@/components/LoadedButton";
 import useTransitionMutation from "@/lib/react-query/useTransitionMutation";
-import { useRouter } from "next/navigation";
-import { ButtonHTMLAttributes } from "react";
+import { useParams, useRouter } from "next/navigation";
 import leaveGroupMutation from "../mutations/leaveGroupMutation";
+import { LogOut } from "lucide-react";
 
-type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  groupId: string;
-};
-export default function LeaveGroupButton({ groupId, children, ...props }: Props) {
+export default function LeaveGroupButton() {
   const { back, refresh } = useRouter();
+  const { groupId } = useParams();
   const { mutate, isLoading } = useTransitionMutation({
     mutationFn: leaveGroupMutation,
     onSuccess: () => {
@@ -19,8 +17,9 @@ export default function LeaveGroupButton({ groupId, children, ...props }: Props)
   });
 
   return (
-    <LoadedButton onClick={() => mutate({ groupId })} variant="danger" isLoading={isLoading} {...props}>
-      {children}
+    <LoadedButton onClick={() => mutate({ groupId })} variant="danger" isLoading={isLoading}>
+      <LogOut />
+      مغادرة
     </LoadedButton>
   );
 }

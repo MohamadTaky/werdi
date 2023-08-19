@@ -3,6 +3,7 @@ import { getServerSession } from "@/lib/nextAuth";
 import { startOfToday } from "date-fns/esm";
 import AddWerdForm from "./components/AddWerdForm";
 import WerdList from "./components/WerdList";
+import Section from "@/components/Section";
 
 export default async function Home() {
   const session = (await getServerSession())!;
@@ -15,9 +16,9 @@ export default async function Home() {
   ]);
 
   return (
-    <>
+    <Section>
       <WerdList werds={werds} />
       <AddWerdForm />
-    </>
+    </Section>
   );
 }

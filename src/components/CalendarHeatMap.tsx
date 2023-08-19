@@ -1,20 +1,20 @@
+import cn from "@/lib/cn";
+import ar from "@/lib/date-fns/ar";
 import { scaleLinear } from "d3";
 import {
-  differenceInDays,
   addDays,
-  endOfYear,
-  startOfYear,
-  startOfWeek,
   addMonths,
+  differenceInDays,
   differenceInWeeks,
+  endOfYear,
   format,
   getDay,
   isSameDay,
   isToday,
+  startOfWeek,
+  startOfYear,
 } from "date-fns";
-import ar from "@/lib/date-fns/ar";
 import { HTMLAttributes } from "react";
-import { twMerge } from "tailwind-merge";
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   cellSize?: number;
@@ -51,9 +51,9 @@ export default function CalendarHeatMap({ cellSize = 18, spacing = 2, data, clas
     .domain([0, 6]);
 
   return (
-    <div
-      className={twMerge(
-        "scroll-hidden no-scrollbar w-full touch-pan-x overflow-auto text-[10px] font-semibold",
+    <figure
+      className={cn(
+        "scrollbar-rounded touch-pan-x overflow-auto text-[10px] font-semibold scrollbar-none",
         className
       )}
       {...props}
@@ -98,6 +98,6 @@ export default function CalendarHeatMap({ cellSize = 18, spacing = 2, data, clas
           />
         ))}
       </svg>
-    </div>
+    </figure>
   );
 }

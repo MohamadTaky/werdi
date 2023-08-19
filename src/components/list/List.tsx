@@ -1,16 +1,18 @@
 "use client";
-import { ListContextProvider } from "./ListContext";
-import { HtmlHTMLAttributes } from "react";
-import { AnimatePresence } from "framer-motion";
+import { HtmlHTMLAttributes, useEffect, Children } from "react";
+import { AnimatePresence, stagger, useAnimate } from "framer-motion";
+import cn from "@/lib/cn";
 
 type Props = HtmlHTMLAttributes<HTMLUListElement>;
 
-export default function List({ children, ...props }: Props) {
+export default function List({ children, className, ...props }: Props) {
+  const [scope, animate] = useAnimate();
+  useEffect(() => {
+    if (Children.count(children)) animate("li", { opacity: [0, 1] }, { delay: stagger(0.1) });
+  }, []);
   return (
-    <ul className="-m-3" {...props}>
-      <ListContextProvider>
-        <AnimatePresence>{children}</AnimatePresence>
-      </ListContextProvider>
+    <ul ref={scope} className={cn("mx-auto w-full max-w-xl", className)} {...props}>
+      <AnimatePresence>{children}</AnimatePresence>
     </ul>
   );
 }

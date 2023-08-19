@@ -1,18 +1,17 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
-import { ButtonHTMLAttributes, ReactNode } from "react";
-import Button from "./Button";
+import { ReactNode } from "react";
+import Button, { ButtonProps } from "./Button";
 
-export type LoadedButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  isLoading?: boolean;
+export type LoadedButtonProps = Omit<ButtonProps, "asChild"> & {
+  isLoading: boolean;
   fallback?: ReactNode;
-  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger" | "warning" | undefined;
 };
 
 export default function LoadedButton({
   isLoading,
-  fallback = <Loader2 size="28" className="animate-spin text-white" />,
+  fallback = <Loader2 className="animate-spin text-white" />,
   children,
   variant = "primary",
   ...props
@@ -22,10 +21,10 @@ export default function LoadedButton({
       <AnimatePresence>
         {isLoading && (
           <motion.div
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 0, translate: "-50% -50%" }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            className="absolute left-1/2 top-1/2"
             key="fallback"
           >
             {fallback}
