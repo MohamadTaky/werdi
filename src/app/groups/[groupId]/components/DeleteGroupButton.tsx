@@ -9,12 +9,15 @@ import useTransitionMutation from "@/lib/react-query/useTransitionMutation";
 import deleteGroupMutation from "../mutations/deleteGroupMutation";
 
 export default function DeleteGroupButton() {
-  const { back } = useRouter();
+  const { back, refresh } = useRouter();
   const { groupId } = useParams();
   const [open, setOpen] = useState(false);
   const { mutate, isLoading } = useTransitionMutation({
     mutationFn: deleteGroupMutation,
-    onSuccess: back,
+    onSuccess: () => {
+      back();
+      refresh();
+    },
   });
 
   return (
