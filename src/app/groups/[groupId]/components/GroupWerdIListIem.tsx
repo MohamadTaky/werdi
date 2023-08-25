@@ -19,7 +19,7 @@ export default function GroupWerdListItem({ text, id, groupId, count, completion
     onSuccess: refresh,
   });
   const session = useSession();
-  const completed = completions.some((completion) => completion.userId === session.data?.user.id);
+  const completed = completions.some((completion) => completion.memberId === session.data?.user.id);
   return (
     <ListItem>
       <Link className="flex-1 space-y-2" href={`groups/${groupId}/${id}`}>

@@ -10,8 +10,8 @@ export async function PUT(_request: NextRequest, { params: { werdId } }: { param
     const werd = await prisma.groupWerd.findUnique({
       where: { id: werdId },
       include: {
-        completions: { where: { userId: session.user.id, completedAt: addDays(new Date(), -1) } },
-        streaks: { where: { groupWerdId: werdId, userId: session.user.id } },
+        completions: { where: { memberId: session.user.id, completedAt: addDays(new Date(), -1) } },
+        streaks: { where: { groupWerdId: werdId, memberId: session.user.id } },
       },
     });
     if (!werd) return NextResponse.json({ message: "requested werd not found" }, { status: 404 });
@@ -21,12 +21,12 @@ export async function PUT(_request: NextRequest, { params: { werdId } }: { param
       where: { id: werdId },
       data: {
         completions: {
-          create: { userId: session.user.id, count: Number(werd.count) },
+          create: { memberId: session.user.id, count: Number(werd.count) },
         },
         streaks: {
           upsert: {
             where: { id: streak?.id ?? "" },
-            create: { userId: session.user.id },
+            create: { memberId: session.user.id },
             update: {
               currentStreak: { increment: 1 },
               longestStreak: completion ? streak.currentStreak + 1 : streak.longestStreak,
