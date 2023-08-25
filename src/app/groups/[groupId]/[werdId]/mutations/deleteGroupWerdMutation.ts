@@ -5,5 +5,5 @@ export default async function deleteGroupWerdMutation({
   groupId: string;
   werdId: string;
 }) {
-  return await fetch(`/api/group/${groupId}/${werdId}`, { method: "DELETE" });
+  return await fetch(`/api/group/${groupId}/werd/${werdId}`, { method: "DELETE" });
 }

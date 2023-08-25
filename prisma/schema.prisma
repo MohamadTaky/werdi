@@ -29,9 +29,9 @@ model Group {
 
 model GroupMember {
   id                   String                @id @default(uuid())
-  user                 User                  @relation(fields: [userId], references: [id])
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId               String
-  group                Group                 @relation(fields: [groupId], references: [id])
+  group                Group                 @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId              String
   role                 Role                  @default(USER)
   groupWerdCompletions GroupWerdCompletion[]

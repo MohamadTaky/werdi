@@ -21,7 +21,7 @@ export async function POST(request: NextRequest, { params: { groupId } }: { para
     const { userIds } = postRequestValidator.parse(data);
     const updatedGroup = await prisma.group.update({
       where: { id: groupId },
-      data: { members: { connect: userIds.map((id) => ({ id })) } },
+      data: { members: { create: userIds.map((id) => ({ userId: id })) } },
     });
     return NextResponse.json(updatedGroup, { status: 201 });
   } catch (error) {
@@ -49,14 +49,10 @@ export async function DELETE(request: NextRequest, { params: { groupId } }: { pa
         );
       await prisma.group.update({
         where: { id: groupId },
-        data: { members: { disconnect: userIds.map((id) => ({ id })) } },
+        data: { members: { deleteMany: userIds.map((id) => ({ userId: id })) } },
       });
-    } else {
-      await prisma.group.update({
-        where: { id: groupId },
-        data: { members: { disconnect: { id: session?.user.id } } },
-      });
-    }
+    } else await prisma.groupMember.deleteMany({ where: { groupId, userId: session.user.id } });
+
     return new Response(null, { status: 204 });
   } catch (error) {
     if (error instanceof ZodError) return NextResponse.json(error, { status: 400 });

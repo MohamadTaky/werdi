@@ -29,7 +29,7 @@ export async function PUT(_request: NextRequest, { params: { werdId } }: { param
             create: { memberId: session.user.id },
             update: {
               currentStreak: { increment: 1 },
-              longestStreak: completion ? streak.currentStreak + 1 : streak.longestStreak,
+              longestStreak: completion ? streak.currentStreak + 1 : streak?.longestStreak ?? 0,
               lastCompletedAt: new Date(),
             },
           },

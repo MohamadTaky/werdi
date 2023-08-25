@@ -14,7 +14,7 @@ export async function DELETE(
       include: { members: { where: { role: "ADMIN" } } },
     });
     if (!group) return NextResponse.json({ message: "requested group not found" }, { status: 404 });
-    if (group.members.some((member) => member.userId === session.user.id))
+    if (!group.members.some((member) => member.userId === session.user.id))
       return NextResponse.json({ message: "user is not authorized to perform this action" }, { status: 403 });
     await prisma.group.delete({ where: { id: groupId } });
     return new Response(null, { status: 204 });

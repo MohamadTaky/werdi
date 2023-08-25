@@ -10,7 +10,6 @@ type Props = {
 };
 
 export default function GroupWerdList({ werds }: Props) {
-  console.log(werds);
   return werds.length > 0 ? (
     <List>
       {werds.map(({ id, ...werd }) => (

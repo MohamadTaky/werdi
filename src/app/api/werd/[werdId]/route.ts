@@ -11,7 +11,7 @@ export async function DELETE(_request: NextRequest, { params: { werdId } }: { pa
     if (werd.userId !== session.user.id)
       return NextResponse.json({ message: "user is not authorized to perform this action" }, { status: 403 });
     await prisma.werd.delete({ where: { id: werdId } });
-    return NextResponse.json(null, { status: 204 });
+    return new Response(null, { status: 204 });
   } catch (error) {
     return NextResponse.json(error, { status: 500 });
   }

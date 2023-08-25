@@ -4,5 +4,5 @@ type MutationType = {
 };
 
 export default async function checkGroupWerdMutation({ groupId, werdId }: MutationType) {
-  await fetch(`/api/group/${groupId}/${werdId}`, { method: "PUT" });
+  await fetch(`/api/group/${groupId}/werd/${werdId}`, { method: "PUT" });
 }

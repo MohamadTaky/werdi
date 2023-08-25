@@ -53,7 +53,7 @@ export default function CalendarHeatMap({ cellSize = 18, spacing = 2, data, clas
   return (
     <figure
       className={cn(
-        "scrollbar-rounded touch-pan-x overflow-auto text-[10px] font-semibold scrollbar-none",
+        "scrollbar-rounded touch-pan-x overflow-auto pb-0.5 text-[10px] font-semibold scrollbar-thin scrollbar-thumb-blue-500",
         className
       )}
       {...props}
