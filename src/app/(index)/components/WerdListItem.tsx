@@ -1,5 +1,5 @@
-import ListItem, { ListItemProps } from "@/components/list/ListItem";
 import LoadedButton from "@/components/LoadedButton";
+import ListItem, { ListItemProps } from "@/components/list/ListItem";
 import useTransitionMutation from "@/lib/react-query/useTransitionMutation";
 import { Werd } from "@prisma/client";
 import { Check, Loader2 } from "lucide-react";
@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import checkWerdMutation from "../mutations/checkWerdMutation";
 
 type WerdListItemProps = ListItemProps & {
-  werd: Werd;
+  werd: Werd & { completed: boolean };
 };
 
 export default function WerdListItem({ werd: { id, text, count, completed } }: WerdListItemProps) {

@@ -42,10 +42,9 @@ model Werd {
   user            User             @relation(fields: [userId], references: [id])
   userId          String
   text            String
-  count           Int
+  count           Int 
   currentStreak   Int              @default(0)
   longestStreak   Int              @default(0)
-  completed       Boolean          @default(false)
 
   @@unique([userId, text])
   @@index([userId])

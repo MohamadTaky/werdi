@@ -3,7 +3,7 @@ import List from "@/components/list/List";
 import { Werd } from "@prisma/client";
 import WerdListItem from "./WerdListItem";
 
-type Props = { werds: Werd[] };
+type Props = { werds: (Werd & { completed: boolean })[] };
 
 export default function WerdList({ werds }: Props) {
   return (

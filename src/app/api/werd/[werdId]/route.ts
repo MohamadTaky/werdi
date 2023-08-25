@@ -28,7 +28,6 @@ export async function PUT(_request: NextRequest, { params: { werdId } }: { param
     const updatedWerd = await prisma.werd.update({
       where: { id: werdId },
       data: {
-        completed: true,
         lastCompletedAt: new Date(),
         currentStreak: { increment: 1 },
         longestStreak: Math.max(werd.currentStreak + 1, werd.longestStreak),

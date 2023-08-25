@@ -7,7 +7,7 @@ export async function PUT(_request: NextRequest) {
     await Promise.all([
       prisma.werd.updateMany({
         where: { lastCompletedAt: { lt: startOfYesterday() } },
-        data: { currentStreak: 1, completed: false },
+        data: { currentStreak: 1 },
       }),
       prisma.groupWerdStreak.updateMany({
         where: { lastCompletedAt: { lt: startOfYesterday() } },

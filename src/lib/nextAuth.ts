@@ -1,10 +1,11 @@
-import prisma from "@/lib/db";
+import prisma, { PrismaClientSingleton } from "@/lib/db";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { PrismaClient } from "@prisma/client";
 import { AuthOptions, getServerSession as serverSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: AuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: CustomPrismaAdapter(prisma as unknown as PrismaClientSingleton),
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GoogleProvider({
@@ -38,4 +39,8 @@ export const authOptions: AuthOptions = {
 
 export async function getServerSession() {
   return await serverSession(authOptions);
+}
+
+function CustomPrismaAdapter(p: PrismaClientSingleton) {
+  return PrismaAdapter(p as unknown as PrismaClient);
 }
