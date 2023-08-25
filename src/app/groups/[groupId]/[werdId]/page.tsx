@@ -6,7 +6,6 @@ import List from "@/components/list/List";
 import ListItem from "@/components/list/ListItem";
 import prisma from "@/lib/db";
 import { getServerSession } from "@/lib/nextAuth";
-import { User } from "@prisma/client";
 import { startOfDay } from "date-fns";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -32,8 +31,9 @@ export default async function GroupWerdPage({
     prisma.group.findUnique({
       where: { id: groupId },
       include: {
-        members: true,
-        admin: true,
+        members: {
+          include: { user: true },
+        },
         werds: {
           where: { id: werdId },
           include: {
@@ -46,8 +46,7 @@ export default async function GroupWerdPage({
   ]);
   const werd = group?.werds[0];
   if (!werd) notFound();
-  const userCompletions = werd.completions.filter((completion) => completion.userId === session?.user.id);
-  const members = [...(group?.members as User[]), group?.admin] as User[];
+  const userCompletions = werd.completions.filter((completion) => completion.memberId === session?.user.id);
   return (
     <Section container="flex">
       <h2 className="text-center text-lg font-semibold">{werd.text}</h2>
@@ -55,9 +54,9 @@ export default async function GroupWerdPage({
         <span className="block text-2xl font-bold text-blue-500">{werd.count}</span> مرة
       </p>
       <CalendarHeatMap data={userCompletions.map(({ completedAt }) => completedAt)} />
-      <List className="-mx-3">
-        {members.map(({ name, id, image }) => (
-          <ListItem key={id} className="list-item items-stretch">
+      <List>
+        {group.members.map(({ id, user: { image, name } }) => (
+          <ListItem key={id}>
             <Link className="flex flex-1 items-center gap-2" href={`groups/${groupId}/${werdId}/${id}`}>
               <Avatar image={image ?? ""} fallback={name?.slice(0, 2)} />
               <p>{name}</p>
@@ -65,7 +64,7 @@ export default async function GroupWerdPage({
                 className="pointer-events-none mr-auto h-6 w-6"
                 tabIndex={-1}
                 readOnly
-                checked={werd.completions.some((completion) => completion.userId === session?.user.id)}
+                checked={werd.completions.some((completion) => completion.memberId === session?.user.id)}
               />
             </Link>
           </ListItem>

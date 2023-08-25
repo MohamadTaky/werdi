@@ -6,5 +6,5 @@ type MutationType = {
 };
 
 export default async function addGroupWerdMutation({ groupId, data }: MutationType) {
-  return await fetch(`/api/group/${groupId}`, { method: "POST", body: JSON.stringify(data) });
+  return await fetch(`/api/group/${groupId}/werd`, { method: "POST", body: JSON.stringify(data) });
 }

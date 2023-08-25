@@ -8,11 +8,11 @@ export async function POST(request: NextRequest, { params: { groupId } }: { para
   try {
     const [session, group] = await Promise.all([
       getServerSession(),
-      prisma.group.findUnique({ where: { id: groupId } }),
+      prisma.group.findUnique({ where: { id: groupId }, include: { members: { where: { role: "ADMIN" } } } }),
     ]);
     if (!session) return NextResponse.json({ message: "user is not signed in" }, { status: 401 });
     if (!group) return NextResponse.json({ group: "requested group not found" }, { status: 404 });
-    if (session.user.id !== group.adminId)
+    if (!group.members.some((member) => member.userId === session.user.id))
       return NextResponse.json(
         { message: "user is not authorized to perform this operation" },
         { status: 403 }
@@ -35,14 +35,14 @@ export async function DELETE(request: NextRequest, { params: { groupId } }: { pa
     const [data, session, group] = await Promise.all([
       request.json(),
       getServerSession(),
-      prisma.group.findUnique({ where: { id: groupId } }),
+      prisma.group.findUnique({ where: { id: groupId }, include: { members: { where: { role: "ADMIN" } } } }),
     ]);
     const { userIds } = deleteRequestValidator.parse(data);
     if (!session) return NextResponse.json({ message: "user is not signed in" }, { status: 401 });
     if (!group) return NextResponse.json({ message: "requested group not found" }, { status: 404 });
 
     if (userIds) {
-      if (session.user.id !== group.adminId)
+      if (!group.members.some((member) => member.userId === session.user.id))
         return NextResponse.json(
           { message: "user is not authorized to perform this action" },
           { status: 404 }

@@ -7,7 +7,7 @@ import Dialog from "@/components/Dialog";
 import LoadedButton from "@/components/LoadedButton";
 import Badge from "@/components/badge";
 import useTransitionMutation from "@/lib/react-query/useTransitionMutation";
-import { Group, GroupWerd, GroupWerdCompletion, User } from "@prisma/client";
+import { Group, GroupMember, GroupWerd, GroupWerdCompletion, User } from "@prisma/client";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2, Search, UserPlus } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -20,11 +20,10 @@ type Props = Group & {
   werds: (GroupWerd & {
     completions: GroupWerdCompletion[];
   })[];
-  admin: User;
-  members: User[];
+  members: GroupMember[];
 };
 
-export default function AddGroupMemberForm({ adminId, members }: Props) {
+export default function AddGroupMemberForm({ members }: Props) {
   const [open, setOpen] = useState(false);
   const [users, setUsers] = useState<SelectableUser[]>([]);
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -99,7 +98,7 @@ export default function AddGroupMemberForm({ adminId, members }: Props) {
                   >
                     <Avatar image={user.image ?? ""} fallback={user.name?.slice(0, 2)} asChild />
                     {user.name}
-                    {user.id === adminId ? (
+                    {members.some((member) => member.role === "ADMIN" && member.userId === user.id) ? (
                       <Badge>مشرف</Badge>
                     ) : members.some((member) => member.id === user.id) ? (
                       <Badge>عضو</Badge>

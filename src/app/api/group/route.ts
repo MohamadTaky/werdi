@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     const { name } = postRequestValidator.parse(data);
     if (!session) return NextResponse.json({ message: "user is not signed in" }, { status: 401 });
     const group = await prisma.group.create({
-      data: { name, adminId: session.user.id, members: { connect: { id: session.user.id } } },
+      data: { name, members: { create: { userId: session.user.id, role: "ADMIN" } } },
     });
     return NextResponse.json(group, { status: 201 });
   } catch (error) {

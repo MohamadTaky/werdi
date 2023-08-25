@@ -1,30 +1,22 @@
 "use client";
-import Badge from "@/components/badge";
 import Button from "@/components/Button";
 import Checkbox from "@/components/Checkbox";
 import Dialog from "@/components/Dialog";
+import Badge from "@/components/badge";
 import List from "@/components/list/List";
 import ListItem from "@/components/list/ListItem";
-import { Group, GroupWerd, GroupWerdCompletion, User } from "@prisma/client";
 import * as Avatar from "@radix-ui/react-avatar";
-import { ListIcon, LogOut } from "lucide-react";
+import { ListIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { ChangeEvent, useEffect, useState } from "react";
+import { GetGroupType } from "../helpers/getGroup";
 import DeleteGroupButton from "./DeleteGroupButton";
 import DeleteGroupMembersButton from "./DeleteGroupMembersButton";
 import LeaveGroupButton from "./LeaveGroupButton";
 
-type Props = {
-  group: Group & {
-    werds: (GroupWerd & {
-      completions: GroupWerdCompletion[];
-    })[];
-    admin: User;
-    members: User[];
-  };
-};
+type Props = { group: GetGroupType };
 
-export default function GroupInfoDialog({ group: { members, admin, id: groupId } }: Props) {
+export default function GroupInfoDialog({ group: { members } }: Props) {
   const session = useSession();
   const [open, setOpen] = useState(false);
   const [removing, setRemoving] = useState(false);
@@ -34,6 +26,9 @@ export default function GroupInfoDialog({ group: { members, admin, id: groupId }
   const handleCheckbox = (e: ChangeEvent<HTMLInputElement>, user: string) => {
     setSelectedusers((prev) => (e.target.checked ? [...prev, user] : prev.filter((u) => u !== user)));
   };
+  const isAdmin = members.some(
+    (member) => member.role === "ADMIN" && member.userId === session.data?.user.id
+  );
 
   return (
     <Dialog
@@ -48,21 +43,21 @@ export default function GroupInfoDialog({ group: { members, admin, id: groupId }
       description={`${members.length} عضو`}
     >
       <List className="m-0 my-2 min-h-[200px]">
-        {members.map(({ id, name, image }) => (
+        {members.map(({ id, role, user: { name, image } }) => (
           <ListItem key={id} className="max-w-full gap-2">
             <Avatar.Root className="h-8 w-8 overflow-hidden rounded-full">
               <Avatar.AvatarImage src={image ?? ""} />
               <Avatar.Fallback>{name?.slice(0, 2)}</Avatar.Fallback>
             </Avatar.Root>
             <p>{name}</p>
-            {session.data?.user.id === id && <Badge className="mr-auto">مشرف</Badge>}
-            {admin.id !== id && removing && (
+            {role === "ADMIN" && <Badge className="mr-auto">مشرف</Badge>}
+            {role === "ADMIN" && removing && (
               <Checkbox onChange={(e) => handleCheckbox(e, id)} className="mr-auto" />
             )}
           </ListItem>
         ))}
       </List>
-      {session.data?.user.id === admin.id ? (
+      {isAdmin ? (
         <>
           {removing ? (
             <DeleteGroupMembersButton userIds={selectedUsers} />
@@ -74,7 +69,7 @@ export default function GroupInfoDialog({ group: { members, admin, id: groupId }
           <DeleteGroupButton />
         </>
       ) : (
-        <LeaveGroupButton/>
+        <LeaveGroupButton />
       )}
     </Dialog>
   );

@@ -7,7 +7,7 @@ import Section from "@/components/Section";
 export default async function GroupsPage() {
   const session = (await getServerSession())!;
   const groups = await prisma.group.findMany({
-    where: { members: { some: { id: session.user.id } } },
+    where: { members: { some: { userId: session.user.id } } },
     include: { _count: true },
   });
   return (

@@ -14,14 +14,14 @@ export default async function Page({ params: { userId, werdId } }: Props) {
   const werd = await prisma.groupWerd.findUnique({
     where: { id: werdId },
     include: {
-      completions: { where: { userId } },
-      streaks: { where: { userId }, include: { user: true } },
+      completions: { where: { memberId: userId } },
+      streaks: { where: { memberId: userId }, include: { member: { include: { user: true } } } },
     },
   });
   if (!werd) notFound();
   const { text, count, completions, streaks } = werd;
-  const { currentStreak, longestStreak, user } = streaks[0];
-  const { name } = user;
+  const { currentStreak, longestStreak, member } = streaks[0];
+  const { name } = member.user;
 
   return (
     <Section container="flex">
